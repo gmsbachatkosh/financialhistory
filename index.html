@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Monthly Tracker - Nepali Calendar</title>
+    <title>GMS Bachat Kosh - Nepali Calendar</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <!-- Nepali Date Converter - Load BEFORE our script -->
+    <!-- Nepali Date Converter -->
     <script src="https://cdn.jsdelivr.net/npm/nepali-date-converter@3.0.3/index.min.js"></script>
     <style>
         * {
@@ -45,27 +45,29 @@
         }
 
         header h1 {
-            font-size: 2.3em;
+            font-size: 2.5em;
             margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
+            letter-spacing: 1px;
         }
 
         header h1::before, header h1::after {
             content: "🇳🇵";
-            font-size: 1.4em;
+            font-size: 1.6em;
         }
 
         .nepali-date-container {
             background: rgba(255, 255, 255, 0.12);
             border-radius: 12px;
-            padding: 8px 15px;
+            padding: 10px 18px;
             display: inline-block;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
             border: 1.5px solid rgba(255, 215, 0, 0.4);
             margin-top: 8px;
+            min-width: 200px;
         }
 
         .nepali-date-container iframe {
@@ -884,15 +886,46 @@
             min-width: 90px !important;
         }
 
-        .loan-records-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #f0f0f0;
+        .record-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 12px;
         }
 
-        .loan-records-section h2 {
-            color: #8e44ad;
-            border-bottom-color: #8e44ad;
+        .record-tab-btn {
+            background: #edf2f7;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .record-tab-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .record-tab-btn.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+            position: relative;
+            top: -2px;
+        }
+
+        .record-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .record-section.active {
+            display: block;
         }
 
         @media (max-width: 768px) {
@@ -935,29 +968,27 @@
             }
             
             header h1 {
-                font-size: 1.9em;
+                font-size: 2.0em;
             }
             
             header {
                 padding: 20px 15px;
             }
-        }
-        
-        .library-warning {
-            background: #fff8e1;
-            border-left: 4px solid #ffc107;
-            padding: 10px 15px;
-            margin: 15px 0;
-            border-radius: 0 4px 4px 0;
-            color: #5f4b00;
-            font-size: 0.9em;
+            
+            .record-tabs {
+                flex-direction: column;
+            }
+            
+            .record-tab-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Member Monthly Tracker</h1>
+            <h1>GMS Bachat Kosh</h1>
             <div class="nepali-date-container">
                 <iframe scrolling="no" border="0" frameborder="0" marginwidth="0" marginheight="0" allowtransparency="true" 
                         src="https://www.ashesh.com.np/linknepali-time.php?time_only=no&font_color=333333&aj_time=yes&font_size=14&line_brake=1&api=250128q367" 
@@ -1225,7 +1256,17 @@
 
             <!-- Data Display Section -->
             <div class="data-section">
-                <h2>📋 Monthly & Loan Records</h2>
+                <h2>📊 Financial Records</h2>
+                
+                <!-- Record Tabs -->
+                <div class="record-tabs">
+                    <button type="button" class="record-tab-btn active" onclick="switchRecordTab('monthly')">
+                        📋 Monthly Records
+                    </button>
+                    <button type="button" class="record-tab-btn" onclick="switchRecordTab('loan')">
+                        💰 Loan Records
+                    </button>
+                </div>
                 
                 <button type="button" class="refresh-btn" onclick="fetchData()">
                     <span>🔄</span> Refresh Data
@@ -1274,19 +1315,22 @@
                 </div>
                 
                 <div id="dataStatus"></div>
-                <div id="dataContainer">
-                    <div class="loading">Loading data...</div>
+                
+                <!-- Monthly Records Section -->
+                <div id="monthlyRecordsSection" class="record-section active">
+                    <div id="dataContainer">
+                        <div class="loading">Loading monthly data...</div>
+                    </div>
                 </div>
 
-                <!-- Loan Records Section - Integrated with same filters -->
-                <div class="loan-records-section">
-                    <h2>💰 Loan Records</h2>
+                <!-- Loan Records Section -->
+                <div id="loanRecordsSection" class="record-section">
                     <div id="loanDataContainer">
                         <div class="loading">Loading loan data...</div>
                     </div>
                 </div>
 
-                <!-- Grand Total Section (Shared for both monthly and loan data) -->
+                <!-- Grand Total Section (Shared for both monthly and loan data) - Always Visible -->
                 <div id="grandTotalSection">
                     <div class="loading">Calculating totals...</div>
                 </div>
@@ -1294,7 +1338,7 @@
         </div>
 
         <footer>
-            <p>Member Monthly Tracker &copy; 2026 | Nepal Financial System</p>
+            <p>GMS Bachat Kosh &copy; 2026 | Nepal Financial System</p>
         </footer>
     </div>
 
@@ -1325,33 +1369,32 @@
             appId: "1:368007807825:web:e80570af3567c4ed3a0970"
         };
 
-        // Passwords (Change these to your desired passwords)
-        const DELETE_PASSWORD = "admin123";      // For deleting entries
-        const FORM_ACCESS_PASSWORD = "admin123"; // For accessing the form section
+        // Passwords
+        const DELETE_PASSWORD = "admin123";
+        const FORM_ACCESS_PASSWORD = "admin123";
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         let entryToDelete = null;
-        let actionType = null; // 'delete' or 'show_form'
+        let actionType = null;
         let nepaliDateConverter = null;
+        let currentRecordTab = 'monthly'; // Default tab
 
         // Initialize everything when page loads
         window.onload = function() {
             console.log("Page fully loaded");
             
-            // Initialize Nepali date converter with fallback
+            // Initialize Nepali date converter
             if (typeof window.nepaliDateConverter !== 'undefined') {
                 nepaliDateConverter = window.nepaliDateConverter;
                 console.log("Nepali Date Converter initialized successfully");
             } else {
                 console.warn("Nepali Date Converter library not available. Using fallback mode.");
-                document.getElementById('dataStatus').innerHTML = 
-                    '<div class="library-warning">⚠️ Nepali Date Converter library not loaded. Loan date conversion may be limited.</div>';
             }
             
-            // Initialize day dropdowns with English days 1-32 (temporary fix)
+            // Initialize day dropdowns with English days 1-32
             initDayDropdowns();
             
             // Set up event listeners for Gregorian date display (if converter available)
@@ -1369,11 +1412,8 @@
         // Initialize day dropdowns with English days 1-32 for all months
         function initDayDropdowns() {
             console.log("Initializing day dropdowns with English days 1-32");
-            
-            // Populate both day dropdowns with 1-32
             populateFixedDays('loanTakenDay');
             populateFixedDays('loanMaturityDay');
-            
             console.log("Day dropdowns initialized with English days 1-32");
         }
 
@@ -1385,7 +1425,6 @@
                 return;
             }
             
-            // Clear existing options except the placeholder
             daySelect.innerHTML = '<option value="">Day</option>';
             
             // Populate with English days 1-32
@@ -1397,7 +1436,7 @@
             }
         }
 
-        // Set up event listeners for date inputs (only if converter available)
+        // Set up event listeners for date inputs
         function setupEventListeners() {
             console.log("Setting up event listeners for Gregorian date conversion...");
             
@@ -1414,7 +1453,7 @@
             console.log("Event listeners set up successfully");
         }
 
-        // Update Gregorian date display when Nepali date changes (only if converter available)
+        // Update Gregorian date display when Nepali date changes
         function updateGregorianDateDisplay() {
             if (!nepaliDateConverter) {
                 console.warn("Nepali date converter not available, skipping Gregorian conversion");
@@ -1466,7 +1505,7 @@
             }
         }
 
-        // Tab switching function
+        // Tab switching function for entry forms
         function switchTab(tabName) {
             // Update tab buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1479,6 +1518,27 @@
                 content.classList.remove('active');
             });
             document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Record tab switching function
+        function switchRecordTab(tabName) {
+            currentRecordTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.record-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Show/hide record sections
+            document.getElementById('monthlyRecordsSection').classList.remove('active');
+            document.getElementById('loanRecordsSection').classList.remove('active');
+            
+            if (tabName === 'monthly') {
+                document.getElementById('monthlyRecordsSection').classList.add('active');
+            } else if (tabName === 'loan') {
+                document.getElementById('loanRecordsSection').classList.add('active');
+            }
         }
 
         // Monthly Entry Form submission handler
@@ -1590,10 +1650,7 @@
                         loanMaturityDate = `${maturityGregorian.year}-${String(maturityGregorian.month).padStart(2, '0')}-${String(maturityGregorian.day).padStart(2, '0')}`;
                     } catch (error) {
                         console.warn('Error converting Nepali dates to Gregorian:', error);
-                        // Continue with empty Gregorian dates if conversion fails
                     }
-                } else {
-                    console.warn('Nepali Date Converter not available, storing only Nepali dates');
                 }
 
                 // Create data object
@@ -1639,7 +1696,7 @@
             }
         });
 
-        // Fetch and display data grouped by month (with no filters by default)
+        // Fetch and display data grouped by month
         async function fetchData() {
             const dataContainer = document.getElementById('dataContainer');
             const loanDataContainer = document.getElementById('loanDataContainer');
@@ -1715,7 +1772,7 @@
                 
             } catch (error) {
                 console.error('Error fetching data: ', error);
-                statusDiv.innerHTML = `<div class="status-message error">❌ Error loading data: ${error.message}</div>`;
+                statusDiv.innerHTML = `<div class="status-message error">❌ Error loading ${error.message}</div>`;
                 dataContainer.innerHTML = '<div class="empty-state">Failed to load data. Please try again.</div>';
                 loanDataContainer.innerHTML = '<div class="empty-state">Failed to load loan data.</div>';
                 grandTotalSection.innerHTML = '<div class="empty-state">Failed to calculate totals.</div>';
@@ -1927,7 +1984,7 @@
                         }
                     });
                     
-                    // Year total summary - calculated correctly without double-counting
+                    // Year total summary
                     const yearGrandTotal = yearTotalDeposit + yearTotalLoanInterest + yearTotalInstallment + yearTotalFine;
                     htmlContent += `
                         <div class="month-total-summary" style="background: linear-gradient(135deg, #8e44ad, #6c3483);">
@@ -2330,7 +2387,7 @@
             const memberSelect = document.getElementById('member');
             
             let html = '';
-            for (let i = 2; i < memberSelect.options.length; i++) { // Skip first two options (--Select-- and default)
+            for (let i = 2; i < memberSelect.options.length; i++) { // Skip first two options
                 const memberName = memberSelect.options[i].value;
                 html += `
                     <div class="member-item">
@@ -2416,7 +2473,7 @@
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement('a');
                 link.setAttribute('href', encodedUri);
-                link.setAttribute('download', `member_tracker_${new Date().toISOString().split('T')[0]}.csv`);
+                link.setAttribute('download', `gms_bachat_kosh_${new Date().toISOString().split('T')[0]}.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
