@@ -24,7 +24,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 10px;
@@ -35,84 +35,93 @@
         header {
             background: linear-gradient(135deg, #1a3a6c, #2c5282);
             color: white;
-            padding: 30px;
+            padding: 25px 30px;
             text-align: center;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
         header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2.3em;
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         header h1::before, header h1::after {
             content: "🇳🇵";
-            font-size: 1.5em;
+            font-size: 1.4em;
         }
 
-        .nepali-date-time-display {
-            background: rgba(255, 255, 255, 0.15);
+        .nepali-date-container {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 8px 15px;
             display: inline-block;
-            padding: 15px 30px;
-            border-radius: 30px;
-            margin-top: 15px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            font-size: 1.2em;
-            text-align: center;
-            min-width: 300px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+            border: 1.5px solid rgba(255, 215, 0, 0.4);
+            margin-top: 8px;
         }
 
-        .nepali-date-time-display .date {
+        .nepali-date-container iframe {
             display: block;
-            font-size: 1.5em;
-            margin-bottom: 8px;
-            color: #ffd700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .nepali-date-time-display .time {
-            display: block;
-            font-size: 1.3em;
-            opacity: 0.95;
-            color: #fff;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            border: none;
+            background: transparent !important;
         }
 
         .main-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            padding: 30px;
+            grid-template-columns: 380px 1fr;
+            gap: 25px;
+            padding: 25px;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1100px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
         }
 
-        .form-section, .data-section {
+        .form-section {
             background: white;
-            padding: 25px;
+            padding: 22px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .data-section {
+            background: white;
+            padding: 22px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
         }
 
         .form-section h2, .data-section h2 {
             color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 1.6em;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 8px;
+            margin-bottom: 18px;
+            font-size: 1.55em;
+            border-bottom: 2.5px solid #3498db;
+            padding-bottom: 7px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -122,37 +131,23 @@
             content: "📝";
         }
 
-        .form-section {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .form-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 7px;
             font-weight: 600;
-            color: #333;
-            font-size: 1em;
+            color: #2d3748;
+            font-size: 0.98em;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         label::before {
-            font-size: 1.2em;
+            font-size: 1.25em;
         }
 
         label[for="month"]::before { content: "📅"; }
@@ -168,94 +163,101 @@
 
         select, input {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 9.5px 12px;
+            border: 1.5px solid #cbd5e0;
+            border-radius: 6px;
             font-size: 1em;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
+            background-color: white;
         }
 
         select:focus, input:focus {
             outline: none;
             border-color: #3498db;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
         }
 
         button {
             background: #3498db;
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            font-size: 1em;
+            padding: 11px 18px;
+            border-radius: 6px;
+            font-size: 1.02em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             width: 100%;
             margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 7px;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
         }
 
         button:hover {
             background: #2980b9;
             transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
         }
 
         button:active {
             transform: translateY(0);
         }
 
-        .data-table {
+        .data-table, .loan-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
-            margin-bottom: 25px;
+            margin-top: 14px;
+            margin-bottom: 22px;
+            font-size: 0.95em;
         }
 
-        .data-table th, .data-table td {
-            padding: 10px 12px;
+        .data-table th, .data-table td, .loan-table th, .loan-table td {
+            padding: 9px 11px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #eaeaea;
         }
 
-        .data-table th {
+        .data-table th, .loan-table th {
             background: #3498db;
             color: white;
             font-weight: 600;
+            position: sticky;
+            top: 0;
         }
 
-        .data-table tr:hover {
-            background: #f8f9fa;
+        .data-table tr:hover, .loan-table tr:hover {
+            background: #f8fafc;
         }
 
-        .data-table tr:nth-child(even) {
-            background: #fafafa;
+        .data-table tr:nth-child(even), .loan-table tr:nth-child(even) {
+            background: #f9fbfd;
         }
 
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 35px;
             color: #3498db;
-            font-size: 1.2em;
+            font-size: 1.15em;
+            font-weight: 500;
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px;
-            color: #999;
+            padding: 35px;
+            color: #718096;
+            font-style: italic;
         }
 
         .status-message {
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 5px;
+            padding: 11px;
+            margin-bottom: 14px;
+            border-radius: 6px;
             text-align: center;
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: 0.93em;
         }
 
         .success {
@@ -280,14 +282,16 @@
             background: #e74c3c;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9em;
+            transition: all 0.25s ease;
+            font-size: 0.88em;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+            width: auto;
+            margin: 0 auto;
         }
 
         .delete-btn:hover {
@@ -298,29 +302,33 @@
         .month-heading {
             background: linear-gradient(135deg, #2c3e50, #1a2530);
             color: white;
-            padding: 15px 20px;
-            margin-top: 25px;
+            padding: 13px 18px;
+            margin-top: 22px;
             border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 7px rgba(0, 0, 0, 0.12);
         }
 
         .month-heading h3 {
             margin: 0;
-            font-size: 1.6em;
+            font-size: 1.5em;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 600;
         }
 
         .year-heading {
             background: linear-gradient(135deg, #8e44ad, #6c3483);
             color: white;
-            padding: 15px 20px;
-            margin-top: 35px;
+            padding: 14px 20px;
+            margin-top: 30px;
             border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-            font-size: 1.8em;
+            box-shadow: 0 3px 9px rgba(0, 0, 0, 0.18);
+            font-size: 1.65em;
             font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .month-total {
@@ -342,18 +350,20 @@
         .grand-total-section {
             background: linear-gradient(135deg, #f39c12, #d35400);
             color: white;
-            padding: 25px;
+            padding: 22px;
             border-radius: 10px;
-            margin-top: 30px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 15px;
         }
 
         .grand-total-section h3 {
-            margin-bottom: 15px;
-            font-size: 1.5em;
+            margin-bottom: 14px;
+            font-size: 1.45em;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 600;
         }
 
         .grand-total-section h3::before {
@@ -362,35 +372,36 @@
 
         .grand-total-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+            gap: 11px;
         }
 
         .total-card {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 13px;
             border-radius: 8px;
             text-align: center;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: transform 0.3s ease;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: transform 0.25s ease;
         }
 
         .total-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .total-card .label {
-            font-size: 0.85em;
-            opacity: 0.9;
-            margin-bottom: 6px;
+            font-size: 0.83em;
+            opacity: 0.92;
+            margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
+            font-weight: 500;
         }
 
         .total-card .value {
-            font-size: 1.6em;
+            font-size: 1.5em;
             font-weight: bold;
         }
 
@@ -404,40 +415,43 @@
 
         .add-member-btn {
             background: #27ae60;
-            margin-top: 15px;
+            margin-top: 14px;
+            box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
         }
 
         .add-member-btn:hover {
             background: #229954;
-            box-shadow: 0 3px 8px rgba(39, 174, 96, 0.3);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
         }
 
         .member-management {
-            margin-top: 25px;
-            padding: 20px;
-            background: #f8f9fa;
+            margin-top: 22px;
+            padding: 18px;
+            background: #f8fafc;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+            border: 1px solid #eaeaea;
             display: none;
             animation: fadeIn 0.3s ease;
         }
 
         .member-management h3 {
             color: #2c3e50;
-            margin-bottom: 12px;
-            font-size: 1.3em;
+            margin-bottom: 11px;
+            font-size: 1.25em;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 600;
         }
 
         .toggle-btn {
             background: #95a5a6;
             width: auto;
             margin-top: 0;
-            padding: 8px 15px;
-            font-size: 0.9em;
+            padding: 7px 14px;
+            font-size: 0.92em;
+            border-radius: 5px;
         }
 
         .toggle-btn:hover {
@@ -445,23 +459,25 @@
         }
 
         .member-list {
-            margin-top: 12px;
-            max-height: 200px;
+            margin-top: 11px;
+            max-height: 190px;
             overflow-y: auto;
-            border: 1px solid #ddd;
+            border: 1px solid #e2e8f0;
             border-radius: 5px;
-            padding: 8px;
+            padding: 7px;
+            background: white;
         }
 
         .member-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 10px;
-            margin-bottom: 6px;
-            background: white;
+            padding: 7px 9px;
+            margin-bottom: 5px;
+            background: #f8fafc;
             border-radius: 4px;
             border-left: 3px solid #3498db;
+            font-size: 0.95em;
         }
 
         .member-item:last-child {
@@ -472,10 +488,11 @@
             background: #e74c3c;
             color: white;
             border: none;
-            padding: 4px 8px;
+            padding: 3px 7px;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 0.85em;
+            font-size: 0.82em;
+            width: auto;
         }
 
         .remove-member-btn:hover {
@@ -484,29 +501,31 @@
 
         .export-btn {
             background: #f39c12;
-            margin-top: 12px;
+            margin-top: 11px;
+            box-shadow: 0 2px 5px rgba(243, 156, 18, 0.3);
         }
 
         .export-btn:hover {
             background: #e67e22;
-            box-shadow: 0 3px 8px rgba(243, 156, 18, 0.3);
+            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.4);
         }
 
         .filter-section {
-            background: #f8f9fa;
-            padding: 15px;
+            background: #f8fafc;
+            padding: 14px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #e0e0e0;
+            margin-bottom: 18px;
+            border: 1px solid #eaeaea;
         }
 
         .filter-section h4 {
-            margin-bottom: 10px;
+            margin-bottom: 9px;
             color: #2c3e50;
-            font-size: 1.1em;
+            font-size: 1.05em;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 7px;
+            font-weight: 600;
         }
 
         .filter-section h4::before {
@@ -516,15 +535,22 @@
         .filter-controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 9px;
+        }
+
+        @media (max-width: 768px) {
+            .filter-controls {
+                grid-template-columns: 1fr;
+            }
         }
 
         .record-count {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.3);
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 3px 10px;
+            border-radius: 14px;
+            font-size: 0.82em;
+            font-weight: 500;
         }
 
         .password-modal {
@@ -534,7 +560,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -546,42 +572,45 @@
 
         .password-box {
             background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
-            width: 90%;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+            max-width: 420px;
+            width: 92%;
             position: relative;
-            border-top: 5px solid #3498db;
+            border-top: 6px solid #3498db;
         }
 
         .password-box h3 {
             color: #2c3e50;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             text-align: center;
-            font-size: 1.8em;
+            font-size: 1.7em;
+            font-weight: 600;
         }
 
         .password-input {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1em;
+            padding: 11px;
+            margin-bottom: 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 6px;
+            font-size: 1.05em;
             text-align: center;
+            font-weight: 500;
         }
 
         .password-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 14px;
         }
 
         .password-buttons button {
             width: 50%;
             margin-top: 0;
             padding: 10px;
+            font-weight: 600;
         }
 
         .cancel-btn {
@@ -603,19 +632,20 @@
         .month-total-summary {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
-            padding: 15px;
+            padding: 14px;
             border-radius: 6px;
             margin-top: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 18px;
+            box-shadow: 0 2px 7px rgba(0, 0, 0, 0.12);
         }
 
         .month-total-summary h4 {
-            margin: 0 0 10px 0;
-            font-size: 1.2em;
+            margin: 0 0 9px 0;
+            font-size: 1.18em;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 9px;
+            font-weight: 600;
         }
 
         .month-total-summary h4::before {
@@ -624,63 +654,67 @@
 
         .month-total-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+            gap: 9px;
         }
 
         .month-total-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px;
+            background: rgba(255, 255, 255, 0.22);
+            padding: 7px;
             border-radius: 4px;
             text-align: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(4px);
         }
 
         .month-total-item .label {
-            font-size: 0.8em;
-            opacity: 0.9;
-            margin-bottom: 3px;
+            font-size: 0.78em;
+            opacity: 0.92;
+            margin-bottom: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
+            font-weight: 500;
         }
 
         .month-total-item .value {
-            font-size: 1.2em;
+            font-size: 1.15em;
             font-weight: bold;
         }
 
         .toggle-section-btn {
             background: #3498db;
             width: auto;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            font-size: 1em;
+            margin-bottom: 18px;
+            padding: 10px 18px;
+            font-size: 1.02em;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
         }
 
         .toggle-section-btn:hover {
             background: #2980b9;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
         }
 
         .section-hidden {
-            background: #f8f9fa;
-            padding: 20px;
+            background: #f8fafc;
+            padding: 18px;
             border-radius: 8px;
             text-align: center;
-            border: 1px dashed #ddd;
-            margin-bottom: 20px;
+            border: 1.5px dashed #cbd5e0;
+            margin-bottom: 18px;
         }
 
         .section-hidden p {
-            color: #666;
-            margin-bottom: 10px;
-            font-size: 1.1em;
+            color: #4a5568;
+            margin-bottom: 9px;
+            font-size: 1.05em;
             font-weight: 500;
         }
 
         .action-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 14px;
         }
 
         .action-buttons button {
@@ -700,11 +734,14 @@
             background: #95a5a6;
             width: auto;
             margin-top: 0;
-            padding: 8px 15px;
-            font-size: 0.9em;
+            padding: 7px 14px;
+            font-size: 0.92em;
             display: flex;
             align-items: center;
             gap: 5px;
+            border-radius: 5px;
+            align-self: flex-start;
+            margin-bottom: 12px;
         }
 
         .refresh-btn:hover {
@@ -712,123 +749,55 @@
         }
 
         .loan-entry-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
+            margin-top: 28px;
+            padding: 18px;
+            background: #f8fafc;
             border-radius: 8px;
-            border: 1px solid #ddd;
+            border: 1px solid #eaeaea;
         }
 
         .loan-entry-section h3 {
             color: #8e44ad;
-            margin-bottom: 15px;
-            font-size: 1.4em;
+            margin-bottom: 13px;
+            font-size: 1.35em;
             border-bottom: 2px solid #8e44ad;
-            padding-bottom: 8px;
-        }
-
-        .loan-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .loan-table th, .loan-table td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .loan-table th {
-            background: #8e44ad;
-            color: white;
+            padding-bottom: 7px;
             font-weight: 600;
-        }
-
-        .loan-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .loan-total-section {
-            background: linear-gradient(135deg, #8e44ad, #6c3483);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        .loan-total-section h4 {
-            margin: 0 0 10px 0;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .loan-total-section h4::before {
-            content: "💰";
-        }
-
-        .loan-total-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-        }
-
-        .loan-total-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px;
-            border-radius: 4px;
-            text-align: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .loan-total-item .label {
-            font-size: 0.8em;
-            opacity: 0.9;
-            margin-bottom: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .loan-total-item .value {
-            font-size: 1.2em;
-            font-weight: bold;
         }
 
         .tab-buttons {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
+            gap: 8px;
+            margin-bottom: 18px;
+            border-bottom: 2px solid #eaeaea;
             padding-bottom: 10px;
         }
 
         .tab-btn {
-            background: #ecf0f1;
+            background: #edf2f7;
             width: auto;
-            padding: 10px 20px;
-            font-size: 1em;
+            padding: 9px 16px;
+            font-size: 0.98em;
             border-radius: 5px 5px 0 0;
             cursor: pointer;
-            border: 1px solid #ddd;
+            border: 1.5px solid #cbd5e0;
             border-bottom: none;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
 
         .tab-btn:hover {
-            background: #dde4e6;
+            background: #e2e8f0;
         }
 
         .tab-btn.active {
             background: #3498db;
             color: white;
             border-color: #3498db;
-            font-weight: bold;
+            font-weight: 600;
             position: relative;
             top: 1px;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
         }
 
         .tab-content {
@@ -843,31 +812,33 @@
         .nepali-year-badge {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
-            padding: 3px 10px;
-            border-radius: 15px;
+            padding: 2.5px 9px;
+            border-radius: 14px;
             font-weight: bold;
             display: inline-block;
-            margin-left: 10px;
-            font-size: 0.9em;
+            margin-left: 9px;
+            font-size: 0.88em;
+            letter-spacing: 0.5px;
         }
 
         .gregorian-date {
-            background: #e3f2fd;
-            padding: 3px 8px;
+            background: #ebf4ff;
+            padding: 2px 7px;
             border-radius: 4px;
-            font-size: 0.9em;
-            color: #1565c0;
+            font-size: 0.85em;
+            color: #2c5282;
             font-weight: 500;
+            margin-top: 3px;
         }
 
         .nepali-date {
-            background: #e8f5e9;
-            padding: 3px 8px;
+            background: #ebf7f0;
+            padding: 2px 7px;
             border-radius: 4px;
-            font-size: 0.9em;
-            color: #2e7d32;
+            font-size: 0.85em;
+            color: #276749;
             font-weight: 500;
-            margin-left: 5px;
+            margin-top: 3px;
         }
 
         .highlight {
@@ -880,32 +851,48 @@
 
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 18px;
             background: #2c3e50;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.75);
             font-size: 0.9em;
             margin-top: 20px;
+            font-weight: 500;
         }
 
         .nepali-date-input {
             display: flex;
-            gap: 10px;
+            gap: 9px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
-        .nepali-date-input select, .nepali-date-input input {
+        .nepali-date-input select {
             margin-bottom: 0;
+            min-width: 110px;
         }
 
         .date-label {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 5px;
+            font-size: 0.88em;
+            color: #4a5568;
+            margin-top: 6px;
             font-style: italic;
+            min-height: 18px;
         }
 
         .day-dropdown {
-            flex: 1.2 !important;
+            flex: 1.1 !important;
+            min-width: 90px !important;
+        }
+
+        .loan-records-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .loan-records-section h2 {
+            color: #8e44ad;
+            border-bottom-color: #8e44ad;
         }
 
         @media (max-width: 768px) {
@@ -914,25 +901,23 @@
             }
             
             .tab-btn {
-                padding: 8px 15px;
+                padding: 8px 14px;
                 font-size: 0.9em;
+                margin-bottom: 5px;
             }
             
             .grand-total-grid, .month-total-grid, .loan-total-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
             
-            .nepali-date-time-display {
-                padding: 12px 20px;
-                min-width: auto;
+            .nepali-date-container {
+                width: 100%;
+                max-width: 280px;
             }
             
-            .nepali-date-time-display .date {
-                font-size: 1.2em;
-            }
-            
-            .nepali-date-time-display .time {
-                font-size: 1.1em;
+            .nepali-date-container iframe {
+                width: 100% !important;
+                height: 50px !important;
             }
             
             .nepali-date-input {
@@ -942,8 +927,30 @@
             
             .nepali-date-input select {
                 width: 100% !important;
-                margin-bottom: 8px;
+                margin-bottom: 7px;
             }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            header h1 {
+                font-size: 1.9em;
+            }
+            
+            header {
+                padding: 20px 15px;
+            }
+        }
+        
+        .library-warning {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+            color: #5f4b00;
+            font-size: 0.9em;
         }
     </style>
 </head>
@@ -951,9 +958,10 @@
     <div class="container">
         <header>
             <h1>Member Monthly Tracker</h1>
-            <div class="nepali-date-time-display" id="currentNepaliDateTime">
-                <span class="date">📅 Loading Nepali Date...</span>
-                <span class="time">🕐 --:--:-- --</span>
+            <div class="nepali-date-container">
+                <iframe scrolling="no" border="0" frameborder="0" marginwidth="0" marginheight="0" allowtransparency="true" 
+                        src="https://www.ashesh.com.np/linknepali-time.php?time_only=no&font_color=333333&aj_time=yes&font_size=14&line_brake=1&api=250128q367" 
+                        width="195" height="45" style="border: none;"></iframe>
             </div>
         </header>
 
@@ -1102,7 +1110,7 @@
                         <div class="form-group">
                             <label for="loanTakenNepaliDate">Loan Taken Date (Nepali):</label>
                             <div class="nepali-date-input">
-                                <select id="loanTakenYear" style="flex: 2;" required>
+                                <select id="loanTakenYear" style="flex: 1.8;" required>
                                     <option value="">Year</option>
                                     <option value="2079">2079</option>
                                     <option value="2080">2080</option>
@@ -1112,7 +1120,7 @@
                                     <option value="2084">2084</option>
                                     <option value="2085">2085</option>
                                 </select>
-                                <select id="loanTakenMonth" style="flex: 2.5;" required>
+                                <select id="loanTakenMonth" style="flex: 2.2;" required>
                                     <option value="">Month</option>
                                     <option value="1">Baishakh</option>
                                     <option value="2">Jestha</option>
@@ -1129,6 +1137,7 @@
                                 </select>
                                 <select id="loanTakenDay" class="day-dropdown" required>
                                     <option value="">Day</option>
+                                    <!-- Days 1-32 will be populated by JavaScript -->
                                 </select>
                             </div>
                             <div class="date-label" id="loanTakenGregorianDate"></div>
@@ -1137,7 +1146,7 @@
                         <div class="form-group">
                             <label for="loanMaturityNepaliDate">Loan Maturity Date (Nepali):</label>
                             <div class="nepali-date-input">
-                                <select id="loanMaturityYear" style="flex: 2;" required>
+                                <select id="loanMaturityYear" style="flex: 1.8;" required>
                                     <option value="">Year</option>
                                     <option value="2079">2079</option>
                                     <option value="2080">2080</option>
@@ -1147,7 +1156,7 @@
                                     <option value="2084">2084</option>
                                     <option value="2085">2085</option>
                                 </select>
-                                <select id="loanMaturityMonth" style="flex: 2.5;" required>
+                                <select id="loanMaturityMonth" style="flex: 2.2;" required>
                                     <option value="">Month</option>
                                     <option value="1">Baishakh</option>
                                     <option value="2">Jestha</option>
@@ -1164,6 +1173,7 @@
                                 </select>
                                 <select id="loanMaturityDay" class="day-dropdown" required>
                                     <option value="">Day</option>
+                                    <!-- Days 1-32 will be populated by JavaScript -->
                                 </select>
                             </div>
                             <div class="date-label" id="loanMaturityGregorianDate"></div>
@@ -1182,7 +1192,7 @@
                 <div class="member-management" id="memberManagementSection">
                     <h3>
                         <span>Member Management</span>
-                        <button type="button" class="toggle-btn" onclick="toggleMemberManagement()" style="padding: 4px 10px; font-size: 0.8em;">
+                        <button type="button" class="toggle-btn" onclick="toggleMemberManagement()" style="padding: 4px 9px; font-size: 0.82em;">
                             ✕ Close
                         </button>
                     </h3>
@@ -1200,7 +1210,7 @@
                 <button type="button" class="export-btn" onclick="exportToCSV()">📥 Export to CSV</button>
 
                 <!-- Hide Form Button -->
-                <button type="button" class="toggle-btn" onclick="hideFormSection()" style="background: #e74c3c;">
+                <button type="button" class="toggle-btn" onclick="hideFormSection()" style="background: #e74c3c; margin-top: 8px;">
                     ❌ Hide Entry Form
                 </button>
             </div>
@@ -1215,7 +1225,7 @@
 
             <!-- Data Display Section -->
             <div class="data-section">
-                <h2>📋 Monthly Records</h2>
+                <h2>📋 Monthly & Loan Records</h2>
                 
                 <button type="button" class="refresh-btn" onclick="fetchData()">
                     <span>🔄</span> Refresh Data
@@ -1224,7 +1234,7 @@
                 <div class="filter-section">
                     <h4>FilterWhere</h4>
                     <div class="filter-controls">
-                        <select id="filterYear" onchange="fetchData()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                        <select id="filterYear" onchange="fetchData()">
                             <option value="">All Years</option>
                             <option value="2079">2079</option>
                             <option value="2080">2080</option>
@@ -1234,7 +1244,7 @@
                             <option value="2084">2084</option>
                             <option value="2085">2085</option>
                         </select>
-                        <select id="filterMonth" onchange="fetchData()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                        <select id="filterMonth" onchange="fetchData()">
                             <option value="">All Months</option>
                             <option value="Baishakh">Baishakh</option>
                             <option value="Jestha">Jestha</option>
@@ -1250,8 +1260,8 @@
                             <option value="Chaitra">Chaitra</option>
                         </select>
                     </div>
-                    <div class="filter-controls" style="margin-top: 10px;">
-                        <select id="filterMember" onchange="fetchData()" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+                    <div class="filter-controls" style="margin-top: 8px;">
+                        <select id="filterMember" onchange="fetchData()">
                             <option value="">All Members</option>
                             <option value="Anil Maharjan">Anil Maharjan</option>
                             <option value="Bindu Maharjan">Bindu Maharjan</option>
@@ -1268,10 +1278,17 @@
                     <div class="loading">Loading data...</div>
                 </div>
 
-                <!-- Loan Records Section -->
-                <div id="loanDataContainer" style="margin-top: 30px;">
-                    <h2 style="color: #8e44ad; margin-bottom: 20px; border-bottom: 2px solid #8e44ad; padding-bottom: 8px;">💰 Loan Records</h2>
-                    <div class="loading">Loading loan data...</div>
+                <!-- Loan Records Section - Integrated with same filters -->
+                <div class="loan-records-section">
+                    <h2>💰 Loan Records</h2>
+                    <div id="loanDataContainer">
+                        <div class="loading">Loading loan data...</div>
+                    </div>
+                </div>
+
+                <!-- Grand Total Section (Shared for both monthly and loan data) -->
+                <div id="grandTotalSection">
+                    <div class="loading">Calculating totals...</div>
                 </div>
             </div>
         </div>
@@ -1285,7 +1302,7 @@
     <div class="password-modal" id="passwordModal">
         <div class="password-box">
             <h3>🔒 Enter Password</h3>
-            <p id="passwordMessage" style="text-align: center; color: #666; margin-bottom: 15px; font-size: 0.9em;">
+            <p id="passwordMessage" style="text-align: center; color: #4a5568; margin-bottom: 14px; font-size: 0.92em;">
                 Please enter the password to access this section
             </p>
             <input type="password" id="passwordInput" class="password-input" placeholder="Enter password" 
@@ -1320,90 +1337,48 @@
         let actionType = null; // 'delete' or 'show_form'
         let nepaliDateConverter = null;
 
-        // Initialize Nepali date converter
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Nepali date converter
-            try {
+        // Initialize everything when page loads
+        window.onload = function() {
+            console.log("Page fully loaded");
+            
+            // Initialize Nepali date converter with fallback
+            if (typeof window.nepaliDateConverter !== 'undefined') {
                 nepaliDateConverter = window.nepaliDateConverter;
-                console.log('Nepali Date Converter initialized successfully');
-                
-                // Display current Nepali date and time
-                displayCurrentNepaliDateTime();
-                
-                // Initialize day dropdowns
-                initDayDropdowns();
-                
-                // Set up event listeners
-                setupEventListeners();
-                
-                // Fetch data
-                fetchData();
-                
-                // Form section is hidden by default
-                document.getElementById('formHiddenSection').style.display = 'block';
-            } catch (error) {
-                console.error('Error initializing Nepali Date Converter:', error);
-                document.getElementById('currentNepaliDateTime').innerHTML = `
-                    <span class="date">⚠️ Date Error</span>
-                    <span class="time">Library not loaded. Please refresh.</span>
-                `;
+                console.log("Nepali Date Converter initialized successfully");
+            } else {
+                console.warn("Nepali Date Converter library not available. Using fallback mode.");
+                document.getElementById('dataStatus').innerHTML = 
+                    '<div class="library-warning">⚠️ Nepali Date Converter library not loaded. Loan date conversion may be limited.</div>';
             }
-        });
+            
+            // Initialize day dropdowns with English days 1-32 (temporary fix)
+            initDayDropdowns();
+            
+            // Set up event listeners for Gregorian date display (if converter available)
+            if (nepaliDateConverter) {
+                setupEventListeners();
+            }
+            
+            // Fetch data with no filters (show all records by default)
+            fetchData();
+            
+            // Form section is hidden by default
+            document.getElementById('formHiddenSection').style.display = 'block';
+        };
 
-        // Initialize day dropdowns
+        // Initialize day dropdowns with English days 1-32 for all months
         function initDayDropdowns() {
-            // Initialize with default values (2080, Baishakh)
-            populateDays('loanTakenDay', '2080', '1');
-            populateDays('loanMaturityDay', '2080', '1');
+            console.log("Initializing day dropdowns with English days 1-32");
+            
+            // Populate both day dropdowns with 1-32
+            populateFixedDays('loanTakenDay');
+            populateFixedDays('loanMaturityDay');
+            
+            console.log("Day dropdowns initialized with English days 1-32");
         }
 
-        // Set up event listeners for date inputs
-        function setupEventListeners() {
-            // Loan Taken Date listeners
-            document.getElementById('loanTakenYear').addEventListener('change', function() {
-                const year = this.value;
-                const month = document.getElementById('loanTakenMonth').value;
-                if (year && month) {
-                    populateDays('loanTakenDay', year, month);
-                }
-                updateGregorianDateDisplay();
-            });
-
-            document.getElementById('loanTakenMonth').addEventListener('change', function() {
-                const year = document.getElementById('loanTakenYear').value;
-                const month = this.value;
-                if (year && month) {
-                    populateDays('loanTakenDay', year, month);
-                }
-                updateGregorianDateDisplay();
-            });
-
-            document.getElementById('loanTakenDay').addEventListener('change', updateGregorianDateDisplay);
-
-            // Loan Maturity Date listeners
-            document.getElementById('loanMaturityYear').addEventListener('change', function() {
-                const year = this.value;
-                const month = document.getElementById('loanMaturityMonth').value;
-                if (year && month) {
-                    populateDays('loanMaturityDay', year, month);
-                }
-                updateGregorianDateDisplay();
-            });
-
-            document.getElementById('loanMaturityMonth').addEventListener('change', function() {
-                const year = document.getElementById('loanMaturityYear').value;
-                const month = this.value;
-                if (year && month) {
-                    populateDays('loanMaturityDay', year, month);
-                }
-                updateGregorianDateDisplay();
-            });
-
-            document.getElementById('loanMaturityDay').addEventListener('change', updateGregorianDateDisplay);
-        }
-
-        // Populate day dropdown based on Nepali year and month
-        function populateDays(selectId, year, month) {
+        // Populate day dropdown with fixed 1-32 days (English)
+        function populateFixedDays(selectId) {
             const daySelect = document.getElementById(selectId);
             if (!daySelect) {
                 console.error(`Day select element not found: ${selectId}`);
@@ -1413,38 +1388,38 @@
             // Clear existing options except the placeholder
             daySelect.innerHTML = '<option value="">Day</option>';
             
-            if (!year || !month || !nepaliDateConverter) {
-                console.warn('Year, month, or converter not available');
-                return;
-            }
-            
-            try {
-                // Get number of days in the Nepali month
-                // Note: getNepaliMonthDays expects Nepali year and month (1-12)
-                const daysInMonth = nepaliDateConverter.getNepaliMonthDays(parseInt(year), parseInt(month));
-                
-                // Populate day options
-                for (let i = 1; i <= daysInMonth; i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = i;
-                    daySelect.appendChild(option);
-                }
-            } catch (error) {
-                console.error('Error populating days:', error);
-                // Fallback: show 1-32 days
-                for (let i = 1; i <= 32; i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = i;
-                    daySelect.appendChild(option);
-                }
+            // Populate with English days 1-32
+            for (let i = 1; i <= 32; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                daySelect.appendChild(option);
             }
         }
 
-        // Update Gregorian date display when Nepali date changes
+        // Set up event listeners for date inputs (only if converter available)
+        function setupEventListeners() {
+            console.log("Setting up event listeners for Gregorian date conversion...");
+            
+            // Loan Taken Date listeners
+            document.getElementById('loanTakenYear').addEventListener('change', updateGregorianDateDisplay);
+            document.getElementById('loanTakenMonth').addEventListener('change', updateGregorianDateDisplay);
+            document.getElementById('loanTakenDay').addEventListener('change', updateGregorianDateDisplay);
+
+            // Loan Maturity Date listeners
+            document.getElementById('loanMaturityYear').addEventListener('change', updateGregorianDateDisplay);
+            document.getElementById('loanMaturityMonth').addEventListener('change', updateGregorianDateDisplay);
+            document.getElementById('loanMaturityDay').addEventListener('change', updateGregorianDateDisplay);
+            
+            console.log("Event listeners set up successfully");
+        }
+
+        // Update Gregorian date display when Nepali date changes (only if converter available)
         function updateGregorianDateDisplay() {
-            if (!nepaliDateConverter) return;
+            if (!nepaliDateConverter) {
+                console.warn("Nepali date converter not available, skipping Gregorian conversion");
+                return;
+            }
             
             try {
                 // Loan Taken Date
@@ -1486,63 +1461,8 @@
                 }
             } catch (error) {
                 console.error('Error converting date:', error);
-            }
-        }
-
-        // Display current Nepali date and time with live updates
-        function displayCurrentNepaliDateTime() {
-            if (!nepaliDateConverter) {
-                setTimeout(displayCurrentNepaliDateTime, 500);
-                return;
-            }
-            
-            try {
-                const now = new Date();
-                const nepaliDate = nepaliDateConverter.gregorianToNepali(
-                    now.getFullYear(),
-                    now.getMonth() + 1,  // JavaScript months are 0-indexed
-                    now.getDate()
-                );
-                
-                const nepaliMonths = [
-                    'Baishakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
-                    'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
-                ];
-                
-                // Validate conversion result
-                if (!nepaliDate || !nepaliDate.year || !nepaliDate.month || !nepaliDate.day) {
-                    throw new Error('Invalid date conversion result');
-                }
-                
-                // Format Nepali date
-                const nepaliMonthName = nepaliMonths[nepaliDate.month - 1] || 'Unknown';
-                const formattedDate = `${nepaliMonthName} ${nepaliDate.day}, ${nepaliDate.year}`;
-                
-                // Format time with AM/PM
-                const hours = now.getHours();
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const seconds = now.getSeconds().toString().padStart(2, '0');
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                const displayHours = hours % 12 || 12;
-                const formattedTime = `${displayHours}:${minutes}:${seconds} ${ampm}`;
-                
-                // Update DOM
-                document.getElementById('currentNepaliDateTime').innerHTML = `
-                    <span class="date">📅 ${formattedDate}</span>
-                    <span class="time">🕐 ${formattedTime}</span>
-                `;
-                
-                // Update time every second
-                setTimeout(displayCurrentNepaliDateTime, 1000);
-                
-            } catch (error) {
-                console.error('Error displaying Nepali date/time:', error);
-                document.getElementById('currentNepaliDateTime').innerHTML = `
-                    <span class="date">⚠️ Date Error</span>
-                    <span class="time">${error.message}</span>
-                `;
-                // Retry after 2 seconds
-                setTimeout(displayCurrentNepaliDateTime, 2000);
+                document.getElementById('loanTakenGregorianDate').textContent = '';
+                document.getElementById('loanMaturityGregorianDate').textContent = '';
             }
         }
 
@@ -1647,22 +1567,34 @@
                     throw new Error('Please select a complete Loan Maturity Date');
                 }
 
-                // Convert Nepali dates to Gregorian for storage
-                const takenGregorian = nepaliDateConverter.nepaliToGregorian(
-                    parseInt(loanTakenYear),
-                    parseInt(loanTakenMonth),
-                    parseInt(loanTakenDay)
-                );
+                let loanTakenDate = '';
+                let loanMaturityDate = '';
                 
-                const maturityGregorian = nepaliDateConverter.nepaliToGregorian(
-                    parseInt(loanMaturityYear),
-                    parseInt(loanMaturityMonth),
-                    parseInt(loanMaturityDay)
-                );
+                // Convert Nepali dates to Gregorian for storage (if converter available)
+                if (nepaliDateConverter) {
+                    try {
+                        const takenGregorian = nepaliDateConverter.nepaliToGregorian(
+                            parseInt(loanTakenYear),
+                            parseInt(loanTakenMonth),
+                            parseInt(loanTakenDay)
+                        );
+                        
+                        const maturityGregorian = nepaliDateConverter.nepaliToGregorian(
+                            parseInt(loanMaturityYear),
+                            parseInt(loanMaturityMonth),
+                            parseInt(loanMaturityDay)
+                        );
 
-                // Format Gregorian dates as YYYY-MM-DD
-                const loanTakenDate = `${takenGregorian.year}-${String(takenGregorian.month).padStart(2, '0')}-${String(takenGregorian.day).padStart(2, '0')}`;
-                const loanMaturityDate = `${maturityGregorian.year}-${String(maturityGregorian.month).padStart(2, '0')}-${String(maturityGregorian.day).padStart(2, '0')}`;
+                        // Format Gregorian dates as YYYY-MM-DD
+                        loanTakenDate = `${takenGregorian.year}-${String(takenGregorian.month).padStart(2, '0')}-${String(takenGregorian.day).padStart(2, '0')}`;
+                        loanMaturityDate = `${maturityGregorian.year}-${String(maturityGregorian.month).padStart(2, '0')}-${String(maturityGregorian.day).padStart(2, '0')}`;
+                    } catch (error) {
+                        console.warn('Error converting Nepali dates to Gregorian:', error);
+                        // Continue with empty Gregorian dates if conversion fails
+                    }
+                } else {
+                    console.warn('Nepali Date Converter not available, storing only Nepali dates');
+                }
 
                 // Create data object
                 const loanData = {
@@ -1690,8 +1622,8 @@
                 document.getElementById('loanMaturityGregorianDate').textContent = '';
                 
                 // Re-initialize day dropdowns
-                populateDays('loanTakenDay', '2080', '1');
-                populateDays('loanMaturityDay', '2080', '1');
+                populateFixedDays('loanTakenDay');
+                populateFixedDays('loanMaturityDay');
                 
                 // Refresh data display
                 fetchData();
@@ -1707,10 +1639,11 @@
             }
         });
 
-        // Fetch and display data grouped by month
+        // Fetch and display data grouped by month (with no filters by default)
         async function fetchData() {
             const dataContainer = document.getElementById('dataContainer');
             const loanDataContainer = document.getElementById('loanDataContainer');
+            const grandTotalSection = document.getElementById('grandTotalSection');
             const statusDiv = document.getElementById('dataStatus');
             const filterYear = document.getElementById('filterYear').value;
             const filterMonth = document.getElementById('filterMonth').value;
@@ -1720,10 +1653,12 @@
                 // Show loading state
                 dataContainer.innerHTML = '<div class="loading">Loading monthly data...</div>';
                 loanDataContainer.innerHTML = '<div class="loading">Loading loan data...</div>';
+                grandTotalSection.innerHTML = '<div class="loading">Calculating totals...</div>';
                 
                 // Build query WITHOUT orderBy to avoid index requirement
                 let query = db.collection('memberMonthlyTracker');
                 
+                // Apply filters only if selected
                 if (filterYear) {
                     query = query.where('year', '==', filterYear);
                 }
@@ -1742,6 +1677,7 @@
                 if (snapshot.empty) {
                     dataContainer.innerHTML = '<div class="empty-state">📭 No monthly entries found.</div>';
                     loanDataContainer.innerHTML = '<div class="empty-state">📭 No loan entries found.</div>';
+                    grandTotalSection.innerHTML = '<div class="empty-state">No data to calculate totals.</div>';
                     return;
                 }
                 
@@ -1769,21 +1705,29 @@
                 loanEntries.sort((a, b) => b.timestamp - a.timestamp);
                 
                 // Display monthly data
-                displayMonthlyData(monthlyEntries, loanEntries);
+                displayMonthlyData(monthlyEntries);
                 
                 // Display loan data
                 displayLoanData(loanEntries);
+                
+                // Display grand totals (shared section)
+                displayGrandTotals(monthlyEntries, loanEntries);
                 
             } catch (error) {
                 console.error('Error fetching data: ', error);
                 statusDiv.innerHTML = `<div class="status-message error">❌ Error loading data: ${error.message}</div>`;
                 dataContainer.innerHTML = '<div class="empty-state">Failed to load data. Please try again.</div>';
                 loanDataContainer.innerHTML = '<div class="empty-state">Failed to load loan data.</div>';
+                grandTotalSection.innerHTML = '<div class="empty-state">Failed to calculate totals.</div>';
+                
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 5000);
             }
         }
 
         // Display monthly data grouped by year and month
-        function displayMonthlyData(monthlyEntries, loanEntries) {
+        function displayMonthlyData(monthlyEntries) {
             const dataContainer = document.getElementById('dataContainer');
             
             // Group data by year
@@ -1825,16 +1769,35 @@
                 let yearTotalInstallment = 0;
                 let yearTotalFine = 0;
                 
-                // Check if year has any data and calculate year totals
+                // First pass: calculate year totals by iterating through months
                 allMonths.forEach(month => {
                     if (dataByYear[year][month].length > 0) {
                         yearHasData = true;
+                        // Calculate month totals
+                        let monthTotalDeposit = 0;
+                        let monthTotalLoanInterest = 0;
+                        let monthTotalInstallment = 0;
+                        let monthTotalFine = 0;
+                        
                         dataByYear[year][month].forEach(entry => {
-                            yearTotalDeposit += entry.deposit;
-                            yearTotalLoanInterest += entry.loanInterest;
-                            yearTotalInstallment += entry.installment;
-                            yearTotalFine += entry.fine;
+                            monthTotalDeposit += (entry.deposit || 0);
+                            monthTotalLoanInterest += (entry.loanInterest || 0);
+                            monthTotalInstallment += (entry.installment || 0);
+                            monthTotalFine += (entry.fine || 0);
                         });
+                        
+                        // Add to year totals
+                        yearTotalDeposit += monthTotalDeposit;
+                        yearTotalLoanInterest += monthTotalLoanInterest;
+                        yearTotalInstallment += monthTotalInstallment;
+                        yearTotalFine += monthTotalFine;
+                        
+                        // Add to grand totals
+                        grandTotalDeposit += monthTotalDeposit;
+                        grandTotalLoanInterest += monthTotalLoanInterest;
+                        grandTotalInstallment += monthTotalInstallment;
+                        grandTotalFine += monthTotalFine;
+                        grandTotalRecords += dataByYear[year][month].length;
                     }
                 });
                 
@@ -1858,24 +1821,11 @@
                             let monthTotalFine = 0;
                             
                             monthData.forEach(entry => {
-                                monthTotalDeposit += entry.deposit;
-                                monthTotalLoanInterest += entry.loanInterest;
-                                monthTotalInstallment += entry.installment;
-                                monthTotalFine += entry.fine;
+                                monthTotalDeposit += (entry.deposit || 0);
+                                monthTotalLoanInterest += (entry.loanInterest || 0);
+                                monthTotalInstallment += (entry.installment || 0);
+                                monthTotalFine += (entry.fine || 0);
                             });
-                            
-                            // Add to grand totals
-                            grandTotalDeposit += monthTotalDeposit;
-                            grandTotalLoanInterest += monthTotalLoanInterest;
-                            grandTotalInstallment += monthTotalInstallment;
-                            grandTotalFine += monthTotalFine;
-                            grandTotalRecords += monthData.length;
-                            
-                            // Add to year totals
-                            yearTotalDeposit += monthTotalDeposit;
-                            yearTotalLoanInterest += monthTotalLoanInterest;
-                            yearTotalInstallment += monthTotalInstallment;
-                            yearTotalFine += monthTotalFine;
                             
                             // Month heading
                             htmlContent += `
@@ -1937,15 +1887,15 @@
                             `;
                             
                             monthData.forEach((entry, index) => {
-                                const rowTotal = entry.deposit + entry.loanInterest + entry.installment + entry.fine;
+                                const rowTotal = (entry.deposit || 0) + (entry.loanInterest || 0) + (entry.installment || 0) + (entry.fine || 0);
                                 htmlContent += `
                                     <tr>
                                         <td>${index + 1}</td>
                                         <td><strong>${entry.member}</strong></td>
-                                        <td>Rs. ${entry.deposit.toFixed(2)}</td>
-                                        <td>Rs. ${entry.loanInterest.toFixed(2)}</td>
-                                        <td>Rs. ${entry.installment.toFixed(2)}</td>
-                                        <td>Rs. ${entry.fine.toFixed(2)}</td>
+                                        <td>Rs. ${(entry.deposit || 0).toFixed(2)}</td>
+                                        <td>Rs. ${(entry.loanInterest || 0).toFixed(2)}</td>
+                                        <td>Rs. ${(entry.installment || 0).toFixed(2)}</td>
+                                        <td>Rs. ${(entry.fine || 0).toFixed(2)}</td>
                                         <td><strong>Rs. ${rowTotal.toFixed(2)}</strong></td>
                                         <td>
                                             <button class="delete-btn" onclick="confirmDelete('${entry.id}')">
@@ -1977,7 +1927,7 @@
                         }
                     });
                     
-                    // Year total summary
+                    // Year total summary - calculated correctly without double-counting
                     const yearGrandTotal = yearTotalDeposit + yearTotalLoanInterest + yearTotalInstallment + yearTotalFine;
                     htmlContent += `
                         <div class="month-total-summary" style="background: linear-gradient(135deg, #8e44ad, #6c3483);">
@@ -2009,18 +1959,135 @@
                 }
             });
             
-            // Calculate total loan amount
+            dataContainer.innerHTML = htmlContent || '<div class="empty-state">📭 No monthly entries found.</div>';
+        }
+
+        // Display loan data
+        function displayLoanData(loanEntries) {
+            const loanDataContainer = document.getElementById('loanDataContainer');
+            
+            if (loanEntries.length === 0) {
+                loanDataContainer.innerHTML = '<div class="empty-state">📭 No loan entries found.</div>';
+                return;
+            }
+            
+            // Build loan table HTML
+            let loanHTML = `
+                <div style="overflow-x: auto;">
+                    <table class="loan-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Year</th>
+                                <th>Month</th>
+                                <th>Member</th>
+                                <th>Loan Amount</th>
+                                <th>Loan Taken Date</th>
+                                <th>Loan Maturity Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            loanEntries.forEach((entry, index) => {
+                // Format Gregorian dates if available
+                let takenDate = '';
+                let maturityDate = '';
+                
+                if (entry.loanTakenDate) {
+                    takenDate = new Date(entry.loanTakenDate).toLocaleDateString('en-GB');
+                }
+                
+                if (entry.loanMaturityDate) {
+                    maturityDate = new Date(entry.loanMaturityDate).toLocaleDateString('en-GB');
+                }
+                
+                // Format Nepali dates if available
+                let takenNepali = '';
+                let maturityNepali = '';
+                
+                if (entry.loanTakenNepaliDate) {
+                    const [y, m, d] = entry.loanTakenNepaliDate.split('-');
+                    const nepaliMonths = [
+                        'Baishakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
+                        'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
+                    ];
+                    takenNepali = `<div class="nepali-date">${nepaliMonths[parseInt(m)-1]} ${d}, ${y}</div>`;
+                }
+                
+                if (entry.loanMaturityNepaliDate) {
+                    const [y, m, d] = entry.loanMaturityNepaliDate.split('-');
+                    const nepaliMonths = [
+                        'Baishakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
+                        'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
+                    ];
+                    maturityNepali = `<div class="nepali-date">${nepaliMonths[parseInt(m)-1]} ${d}, ${y}</div>`;
+                }
+                
+                loanHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${entry.year}</strong><div class="nepali-year-badge">वि.सं. ${entry.year}</div></td>
+                        <td><strong>${entry.month}</strong></td>
+                        <td>${entry.member}</td>
+                        <td><strong>Rs. ${(entry.loanAmount || 0).toFixed(2)}</strong></td>
+                        <td>
+                            ${takenNepali}
+                            ${takenDate ? `<div class="gregorian-date">${takenDate}</div>` : ''}
+                        </td>
+                        <td>
+                            ${maturityNepali}
+                            ${maturityDate ? `<div class="gregorian-date">${maturityDate}</div>` : ''}
+                        </td>
+                        <td>
+                            <button class="delete-btn" onclick="confirmDelete('${entry.id}')">
+                                <span>🗑️</span> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            loanHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            loanDataContainer.innerHTML = loanHTML;
+        }
+
+        // Display grand totals (shared section for both monthly and loan data)
+        function displayGrandTotals(monthlyEntries, loanEntries) {
+            const grandTotalSection = document.getElementById('grandTotalSection');
+            
+            // Calculate monthly totals with safety checks
+            let grandTotalDeposit = 0;
+            let grandTotalLoanInterest = 0;
+            let grandTotalInstallment = 0;
+            let grandTotalFine = 0;
+            let grandTotalRecords = monthlyEntries.length;
+            
+            monthlyEntries.forEach(entry => {
+                grandTotalDeposit += (entry.deposit || 0);
+                grandTotalLoanInterest += (entry.loanInterest || 0);
+                grandTotalInstallment += (entry.installment || 0);
+                grandTotalFine += (entry.fine || 0);
+            });
+            
+            // Calculate loan totals
             let totalLoanAmount = 0;
             loanEntries.forEach(entry => {
-                totalLoanAmount += entry.loanAmount;
+                totalLoanAmount += (entry.loanAmount || 0);
             });
             
             // Calculate remaining amount
             const grandTotalAll = grandTotalDeposit + grandTotalLoanInterest + grandTotalInstallment + grandTotalFine;
             const remainingAmount = grandTotalAll - totalLoanAmount;
             
-            // Grand Total Section with Remaining Amount
-            htmlContent += `
+            // Build grand total HTML
+            const htmlContent = `
                 <div class="grand-total-section">
                     <h3>Grand Totals (All Years)</h3>
                     <div class="grand-total-grid">
@@ -2060,119 +2127,7 @@
                 </div>
             `;
             
-            dataContainer.innerHTML = htmlContent;
-        }
-
-        // Display loan data
-        function displayLoanData(loanEntries) {
-            const loanDataContainer = document.getElementById('loanDataContainer');
-            
-            if (loanEntries.length === 0) {
-                loanDataContainer.innerHTML = `
-                    <h2 style="color: #8e44ad; margin-bottom: 20px; border-bottom: 2px solid #8e44ad; padding-bottom: 8px;">💰 Loan Records</h2>
-                    <div class="empty-state">📭 No loan entries found.</div>
-                `;
-                return;
-            }
-            
-            // Calculate total loan amount
-            let totalLoanAmount = 0;
-            loanEntries.forEach(entry => {
-                totalLoanAmount += entry.loanAmount;
-            });
-            
-            // Build loan table HTML
-            let loanHTML = `
-                <h2 style="color: #8e44ad; margin-bottom: 20px; border-bottom: 2px solid #8e44ad; padding-bottom: 8px;">💰 Loan Records</h2>
-                <div style="overflow-x: auto;">
-                    <table class="loan-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Year</th>
-                                <th>Month</th>
-                                <th>Member</th>
-                                <th>Loan Amount</th>
-                                <th>Loan Taken Date</th>
-                                <th>Loan Maturity Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            loanEntries.forEach((entry, index) => {
-                // Format Gregorian dates
-                const takenDate = new Date(entry.loanTakenDate).toLocaleDateString('en-GB');
-                const maturityDate = new Date(entry.loanMaturityDate).toLocaleDateString('en-GB');
-                
-                // Format Nepali dates if available
-                let takenNepali = '';
-                let maturityNepali = '';
-                
-                if (entry.loanTakenNepaliDate) {
-                    const [y, m, d] = entry.loanTakenNepaliDate.split('-');
-                    const nepaliMonths = [
-                        'Baishakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
-                        'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
-                    ];
-                    takenNepali = `<div class="nepali-date">${nepaliMonths[parseInt(m)-1]} ${d}, ${y}</div>`;
-                }
-                
-                if (entry.loanMaturityNepaliDate) {
-                    const [y, m, d] = entry.loanMaturityNepaliDate.split('-');
-                    const nepaliMonths = [
-                        'Baishakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
-                        'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
-                    ];
-                    maturityNepali = `<div class="nepali-date">${nepaliMonths[parseInt(m)-1]} ${d}, ${y}</div>`;
-                }
-                
-                loanHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td><strong>${entry.year}</strong><div class="nepali-year-badge">वि.सं. ${entry.year}</div></td>
-                        <td><strong>${entry.month}</strong></td>
-                        <td>${entry.member}</td>
-                        <td><strong>Rs. ${entry.loanAmount.toFixed(2)}</strong></td>
-                        <td>
-                            ${takenNepali}
-                            <div class="gregorian-date">${takenDate}</div>
-                        </td>
-                        <td>
-                            ${maturityNepali}
-                            <div class="gregorian-date">${maturityDate}</div>
-                        </td>
-                        <td>
-                            <button class="delete-btn" onclick="confirmDelete('${entry.id}')">
-                                <span>🗑️</span> Delete
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            loanHTML += `
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="loan-total-section">
-                    <h4>Loan Summary</h4>
-                    <div class="loan-total-grid">
-                        <div class="loan-total-item">
-                            <div class="label">Total Loans</div>
-                            <div class="value">${loanEntries.length}</div>
-                        </div>
-                        <div class="loan-total-item">
-                            <div class="label">Total Loan Amount</div>
-                            <div class="value">Rs. ${totalLoanAmount.toFixed(2)}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            loanDataContainer.innerHTML = loanHTML;
+            grandTotalSection.innerHTML = htmlContent;
         }
 
         // Confirm delete - store the document ID and show password modal
@@ -2386,7 +2341,7 @@
             }
             
             if (html === '') {
-                html = '<div style="text-align: center; padding: 10px; color: #999;">No members added yet</div>';
+                html = '<div style="text-align: center; padding: 8px; color: #718096;">No members added yet</div>';
             }
             
             memberListDiv.innerHTML = html;
@@ -2450,10 +2405,10 @@
                 
                 dataArray.forEach(entry => {
                     if (entry.type === 'loan') {
-                        csvContent += `"Loan","${entry.year}","${entry.month}","${entry.member}",,,,"${entry.loanAmount}","${entry.loanTakenDate}","${entry.loanMaturityDate}",${entry.loanAmount}\n`;
+                        csvContent += `"Loan","${entry.year}","${entry.month}","${entry.member}",,,,"${entry.loanAmount || 0}","${entry.loanTakenDate || ''}","${entry.loanMaturityDate || ''}",${entry.loanAmount || 0}\n`;
                     } else {
-                        const total = entry.deposit + entry.loanInterest + entry.installment + entry.fine;
-                        csvContent += `"Monthly","${entry.year}","${entry.month}","${entry.member}",${entry.deposit},${entry.loanInterest},${entry.installment},${entry.fine},,,${total}\n`;
+                        const total = (entry.deposit || 0) + (entry.loanInterest || 0) + (entry.installment || 0) + (entry.fine || 0);
+                        csvContent += `"Monthly","${entry.year}","${entry.month}","${entry.member}",${entry.deposit || 0},${entry.loanInterest || 0},${entry.installment || 0},${entry.fine || 0},,,${total}\n`;
                     }
                 });
                 
