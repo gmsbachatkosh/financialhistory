@@ -47,8 +47,7 @@
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white; padding: 1.5rem 0; margin-bottom: 1rem;
             border-radius: 0 0 25px 25px; box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.4);
-        }
-        .header-title { font-weight: 800; letter-spacing: -0.5px; font-size: 1.8rem; }
+        }        .header-title { font-weight: 800; letter-spacing: -0.5px; font-size: 1.8rem; }
         .header-subtitle { opacity: 0.9; font-weight: 300; font-size: 0.9rem; }
 
         .card { border: none; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background: var(--card-bg); margin-bottom: 1.5rem; }
@@ -97,8 +96,7 @@
         .history-table td, .summary-table td, .loan-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); font-size: 0.85rem; text-align: center; vertical-align: middle; }
         .history-table tr:last-child td, .summary-table tr:last-child td, .loan-table tr:last-child td { border-bottom: none; }
         .history-table tr:hover, .summary-table tr:hover, .loan-table tr:hover { background-color: #f9fafb; }
-        
-        .col-month { text-align: left !important; font-weight: 600; color: var(--primary); }
+                .col-month { text-align: left !important; font-weight: 600; color: var(--primary); }
         .badge-loan { background-color: #e0e7ff; color: #4338ca; font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
         .badge-loan:hover { background-color: #c7d2fe; }
 
@@ -147,7 +145,7 @@
         
         .tab-content-section { display: none; }
         .tab-content-section.active { display: block; }
-
+        /* Updated Status Badges */
         .status-active { background-color: #d1fae5; color: #065f46; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
         .status-closed { background-color: #e5e7eb; color: #374151; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
         .status-overdue { background-color: #fee2e2; color: #991b1b; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
@@ -196,8 +194,7 @@
             padding-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
+            gap: 10px;        }
         .bank-row {
             display: flex;
             justify-content: space-between;
@@ -246,8 +243,7 @@
             color: var(--text-muted);
             text-align: center;
             font-style: italic;
-        }
-    </style>
+        }    </style>
 </head>
 <body>
 
@@ -296,9 +292,8 @@
         <!-- Header -->
         <div class="header-section text-center">
             <div class="container d-flex justify-content-between align-items-center">
-                <div class="w-100">
-                    <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>
-                    <p class="header-subtitle mb-0">Monthly Contributions & Loan Records</p>
+                <div class="w-100">                    <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>
+                    <p class="header-subtitle mb-0">Financials Details</p>
                 </div>
                 <!-- Logout Button -->
                 <div class="position-absolute top-0 end-0 p-3">
@@ -346,8 +341,7 @@
                             <div class="totals-bar">
                                 <span class="small fw-bold">Grand Total (Cash)</span>
                                 <span class="grand-total-val" id="grandTotalDisplay">0</span>
-                            </div>
-                            <small class="text-muted d-block mt-1 text-center" style="font-size: 0.7rem;">*Excludes Loan Principal</small>
+                            </div>                            <small class="text-muted d-block mt-1 text-center" style="font-size: 0.7rem;">*Excludes Loan Principal</small>
 
                             <button id="saveBtn" class="btn btn-primary-custom mt-3 admin-only-btn">
                                 <span id="btnText">Save Record</span>
@@ -396,8 +390,7 @@
                                 </div>
                             </div>
 
-                            <div id="summary-content" class="tab-content-section">
-                                <div class="d-flex justify-content-end mb-2">
+                            <div id="summary-content" class="tab-content-section">                                <div class="d-flex justify-content-end mb-2">
                                     <button class="btn btn-sm btn-outline-secondary" onclick="loadSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
                                 </div>
                                 <div id="summaryContainer">
@@ -414,7 +407,7 @@
                                 </div>
                             </div>
 
-                            <!-- NEW: Bank Details Tab Content -->
+                            <!-- Bank Details Tab Content -->
                             <div id="bank-content" class="tab-content-section">
                                 <div class="bank-details-container">
                                     <div class="bank-card">
@@ -446,8 +439,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </div>    </div>
 
     <!-- Detail Modal (Record Details) -->
     <div class="modal fade" id="detailModal" tabindex="-1">
@@ -496,8 +488,7 @@
            authDomain: "member-tracker-78f9f.firebaseapp.com",
            projectId: "member-tracker-78f9f",
            storageBucket: "member-tracker-78f9f.firebasestorage.app",
-           messagingSenderId: "368007807825",
-           appId: "1:368007807825:web:e80570af3567c4ed3a0970",
+           messagingSenderId: "368007807825",           appId: "1:368007807825:web:e80570af3567c4ed3a0970",
            measurementId: "G-WEP639W4HY"
         };
 
@@ -546,8 +537,7 @@
         const modalDeleteBtn = document.getElementById('modalDeleteBtn');
         const formTitle = document.getElementById('formTitle');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
-        const yearSelect = document.getElementById('entryYear');
-        const logoutBtn = document.getElementById('logoutBtn');
+        const yearSelect = document.getElementById('entryYear');        const logoutBtn = document.getElementById('logoutBtn');
         const logoutText = document.getElementById('logoutText');
         let currentDeleteId = null;
         let allRecordsData = [];
@@ -596,7 +586,6 @@
                     errorDiv.classList.remove('d-none');
                 });
         });
-
         window.loginAsGuest = () => {
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
@@ -646,8 +635,7 @@
                         <option value="" disabled>Month</option>
                         ${nepaliMonths.map(m => `<option value="${m}" ${getSelected('Month', m)}>${m}</option>`).join('')}
                     </select>
-                    <select class="form-select form-select-sm date-part" data-member="${member}" data-prefix="${prefix}" data-type="year">
-                        <option value="" disabled>Year</option>
+                    <select class="form-select form-select-sm date-part" data-member="${member}" data-prefix="${prefix}" data-type="year">                        <option value="" disabled>Year</option>
                         ${Array.from({length: 11}, (_, i) => 2075 + i).map(y => `<option value="${y}" ${getSelected('Year', y)}>${y}</option>`).join('')}
                     </select>
                 </div>
@@ -697,7 +685,6 @@
             grandTotalDisplay.textContent = `NPR ${grandTotal.toLocaleString()}`;
             return grandTotal;
         }
-
         function getDateFromSelects(prefix, member) {
             const day = document.querySelector(`.date-part[data-member="${member}"][data-prefix="${prefix}"][data-type="day"]`)?.value;
             const month = document.querySelector(`.date-part[data-member="${member}"][data-prefix="${prefix}"][data-type="month"]`)?.value;
@@ -717,12 +704,43 @@
             return year * 10000 + monthIdx * 100 + day;
         }
 
+        // FIXED: More accurate Current Date Calculation
         function getCurrentNepaliDateNum() {
             const now = new Date();
-            const npYear = now.getFullYear() + 57;
-            const npMonth = now.getMonth() + 1; 
-            const npDay = now.getDate();
-            return npYear * 10000 + npMonth * 100 + npDay;
+            const gYear = now.getFullYear();
+            const gMonth = now.getMonth() + 1; // 1-12
+            const gDay = now.getDate();
+
+            // Approximate Nepali Year
+            let npYear = gYear + 57;
+            if (gMonth < 4) { // Before mid-April
+                npYear = gYear + 56; 
+            }
+            
+            // Approximate Nepali Month based on Gregorian Month
+            // This is a simplified mapping. For production, a full library is best, 
+            // but this fixes the immediate "always overdue" bug by being more conservative.
+            let npMonth = 1; 
+            if (gMonth >= 4 && gMonth <= 5) npMonth = 1; // Baishakh
+            else if (gMonth >= 5 && gMonth <= 6) npMonth = 2; // Jestha
+            else if (gMonth >= 6 && gMonth <= 7) npMonth = 3; // Ashadh
+            else if (gMonth >= 7 && gMonth <= 8) npMonth = 4; // Shrawan
+            else if (gMonth >= 8 && gMonth <= 9) npMonth = 5; // Bhadra
+            else if (gMonth >= 9 && gMonth <= 10) npMonth = 6; // Ashwin
+            else if (gMonth >= 10 && gMonth <= 11) npMonth = 7; // Kartik
+            else if (gMonth >= 11 && gMonth <= 12) npMonth = 8; // Mangsir
+            else if (gMonth >= 12 || gMonth <= 1) npMonth = 9; // Poush
+            else if (gMonth >= 1 && gMonth <= 2) npMonth = 10; // Magh
+            else if (gMonth >= 2 && gMonth <= 3) npMonth = 11; // Falgun
+            else if (gMonth >= 3 && gMonth <= 4) npMonth = 12; // Chaitra
+            // To prevent false "Overdue" flags, we will use a slightly earlier date estimate
+            // or just rely on the Year/Month. If the maturity year is far in the future, it's safe.
+            // If the maturity year is the current year, we need to be careful.
+            
+            // Safe fallback: Just use Year and Month for comparison if day is ambiguous
+            // But let's try to construct a comparable number.
+            // We'll assume the 15th of the estimated month to be safe in the middle.
+            return npYear * 10000 + npMonth * 100 + 15;
         }
         
         const todayNP = getCurrentNepaliDateNum();
@@ -764,8 +782,7 @@
                     cancelEdit();
                 } else {
                     payload.createdAt = new Date();
-                    payload.createdBy = auth.currentUser.email || "Admin";
-                    await addDoc(collection(db, collectionName), payload);
+                    payload.createdBy = auth.currentUser.email || "Admin";                    await addDoc(collection(db, collectionName), payload);
                     showMessage("Saved!", "success");
                     renderInputs(null);
                 }
@@ -814,7 +831,6 @@
                     const uniqueId = `year-${year}`;
                     let yearGrandTotal = 0;
                     records.forEach(rec => { yearGrandTotal += rec.totals.grand; });
-
                     const accordionItem = document.createElement('div');
                     accordionItem.className = 'accordion-item';
                     accordionItem.innerHTML = `
@@ -864,8 +880,7 @@
                         if (!auth.currentUser.isAnonymous) {
                             actionButtons = `
                                 <button class="btn btn-action btn-outline-primary admin-only" onclick="window.editRecord('${rec.id}')"><i class="fas fa-pen"></i></button>
-                                <button class="btn btn-action btn-outline-danger admin-only" onclick="window.confirmDelete('${rec.id}')"><i class="fas fa-trash"></i></button>
-                            `;
+                                <button class="btn btn-action btn-outline-danger admin-only" onclick="window.confirmDelete('${rec.id}')"><i class="fas fa-trash"></i></button>                            `;
                         }
 
                         // View Button (Visible to ALL)
@@ -914,8 +929,7 @@
                         memberStats[m].fine += fn;
                         memberStats[m].total += (dep + fn);
                         grandTotalAll += (dep + fn);
-                    }
-                });
+                    }                });
             });
 
             let html = `<div class="table-responsive"><table class="summary-table"><thead><tr><th class="col-month" style="text-align:left !important;">Member Name</th><th class="text-primary">Total Deposit</th><th class="text-danger">Total Fine</th><th class="text-dark" style="background:#eef2ff !important;">Subtotal (Dep+Fine)</th></tr></thead><tbody>`;
@@ -964,8 +978,7 @@
                 });
             });
             loans.forEach(loan => {
-                chronologicalData.forEach(rec => {
-                    const rMonthIdx = nepaliMonthsOrder.indexOf(rec.month) + 1;
+                chronologicalData.forEach(rec => {                    const rMonthIdx = nepaliMonthsOrder.indexOf(rec.month) + 1;
                     const recNum = rec.year * 10000 + rMonthIdx * 100 + 15; 
                     const data = rec.members[loan.member];
                     if (data && data.installment > 0 && recNum >= loan.takenDateNum) {
@@ -992,13 +1005,19 @@
             loans.forEach(loan => {
                 const balance = loan.loanAmount - loan.totalPaid;
                 let statusBadge = '';
+                
+                // STRICT DATE CHECK LOGIC
                 if (loan.totalPaid >= loan.loanAmount) {
+                    // Fully Paid -> Closed
                     statusBadge = '<span class="badge status-closed">Closed</span>';
                 } else if (todayNP > loan.maturityDateNum) {
+                    // Today is AFTER Maturity -> Overdue
                     statusBadge = '<span class="badge status-overdue">Overdue</span>';
                 } else {
+                    // Today is BEFORE or EQUAL to Maturity -> Active
                     statusBadge = '<span class="badge status-active">Active</span>';
                 }
+
                 html += `
                     <tr>
                         <td class="col-month" style="text-align:left !important; font-weight:600;">${loan.member}</td>
@@ -1008,8 +1027,7 @@
                         <td>${loan.takenDate}</td>
                         <td>${loan.maturityDate}</td>
                         <td>${statusBadge}</td>
-                    </tr>
-                `;
+                    </tr>                `;
             });
             html += `</tbody></table></div>`;
             loanContainer.innerHTML = html;
@@ -1058,8 +1076,7 @@
             saveBtn.style.background = ''; 
             saveBtn.style.color = '';
             document.getElementById('btnText').innerText = "Save Record";
-            renderInputs(null);
-            messageArea.innerText = "";
+            renderInputs(null);            messageArea.innerText = "";
         };
 
         window.showLoanDetails = (id) => {
@@ -1108,8 +1125,7 @@
                             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
                                 <strong>${name}</strong>
                                 <span class="badge bg-primary">Total: NPR ${vals.cashTotal.toLocaleString()}</span>
-                            </div>
-                            <div class="card-body py-2">
+                            </div>                            <div class="card-body py-2">
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="detail-row"><span class="detail-label">Deposit</span> <span class="detail-value positive-value">${vals.deposit > 0 ? vals.deposit.toLocaleString() : '-'}</span></div>
@@ -1158,8 +1174,7 @@
                         <i class="fas fa-user"></i>
                     </div>
                 </div>
-                <table class="table table-borderless">
-                    <tr><td class="fw-bold">Name:</td><td class="text-end">${memberName}</td></tr>
+                <table class="table table-borderless">                    <tr><td class="fw-bold">Name:</td><td class="text-end">${memberName}</td></tr>
                     <tr><td class="fw-bold">Address:</td><td class="text-end">${details.address}</td></tr>
                     <tr><td class="fw-bold">Contact:</td><td class="text-end">${details.contact}</td></tr>
                     <tr><td class="fw-bold">Email:</td><td class="text-end">${details.email}</td></tr>
@@ -1208,8 +1223,7 @@
 
         // Expose globals
         window.editRecord = editRecord;
-        window.cancelEdit = cancelEdit;
-        window.showLoanDetails = showLoanDetails;
+        window.cancelEdit = cancelEdit;        window.showLoanDetails = showLoanDetails;
         window.viewDetails = viewDetails;
         window.showMemberDetails = showMemberDetails;
         window.confirmDelete = confirmDelete;
@@ -1219,4 +1233,4 @@
         window.copyToClipboard = copyToClipboard;
     </script>
 </body>
-</html>
+                                    </html>
