@@ -211,10 +211,10 @@
                     <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>
                     <p class="header-subtitle mb-0">Monthly Contributions & Loan Records</p>
                 </div>
-                <!-- Logout Button (Admin Only) -->
-                <div class="position-absolute top-0 end-0 p-3 admin-only">
-                    <button onclick="logout()" class="btn btn-sm btn-outline-light">
-                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                <!-- Logout Button (Visible for BOTH Admin and Guest) -->
+                <div class="position-absolute top-0 end-0 p-3">
+                    <button onclick="logout()" class="btn btn-sm btn-outline-light" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt me-1"></i> <span id="logoutText">Logout</span>
                     </button>
                 </div>
             </div>
@@ -397,6 +397,8 @@
         const formTitle = document.getElementById('formTitle');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const yearSelect = document.getElementById('entryYear');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const logoutText = document.getElementById('logoutText');
         let currentDeleteId = null;
         let allRecordsData = [];
 
@@ -412,8 +414,12 @@
                 // Check if Admin (has email) or Guest (anonymous)
                 if (user.isAnonymous) {
                     document.body.classList.remove('is-admin');
+                    logoutText.textContent = "Exit"; // Change text for guests
+                    logoutBtn.title = "Exit Guest Mode";
                 } else {
                     document.body.classList.add('is-admin');
+                    logoutText.textContent = "Logout"; // Change text for admins
+                    logoutBtn.title = "Logout Admin Account";
                 }
                 
                 initApp();
