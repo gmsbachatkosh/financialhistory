@@ -286,6 +286,12 @@
             "Rajeep Maharjan", "Sajina Barahi", "Supreme Chitrakar"
         ];
 
+        // Correct Nepali Month Order for Sorting (Baishakh = 0, Chaitra = 11)
+        const nepaliMonthsOrder = [
+            "Baishakh", "Jestha", "Ashadh", "Shrawan", "Bhadra", "Ashwin",
+            "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"
+        ];
+
         const nepaliMonths = [
             "Baishakh", "Jestha", "Ashadh", "Shrawan", "Bhadra", "Ashwin",
             "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"
@@ -437,7 +443,6 @@
                     showMessage("Saved!", "success");
                     renderInputs(null);
                 }
-                // Refresh both tabs
                 loadHistory();
                 if(document.getElementById('summary-content').classList.contains('active')) {
                     loadSummary();
@@ -456,7 +461,7 @@
                 const q = query(collection(db, collectionName), orderBy("timestamp", "desc"));
                 const snapshot = await getDocs(q);
                 historyContainer.innerHTML = '';
-                allRecordsData = []; // Cache for summary
+                allRecordsData = []; 
 
                 if(snapshot.empty) {
                     historyContainer.innerHTML = '<div class="text-center text-muted py-5">No records found.</div>';
@@ -470,11 +475,22 @@
                     if(!grouped[y]) grouped[y] = [];
                     const record = { id: docSnap.id, ...data };
                     grouped[y].push(record);
-                    allRecordsData.push(record); // Store for summary
+                    allRecordsData.push(record); 
                 });
 
                 Object.keys(grouped).sort((a,b) => b-a).forEach(year => {
-                    const records = grouped[year];
+                    let records = grouped[year];
+                    
+                    // SORT RECORDS BY NEPALI MONTH ORDER
+                    // Baishakh (index 0) should be at the bottom (last in array)
+                    // Chaitra (index 11) should be at the top (first in array)
+                    records.sort((a, b) => {
+                        const indexA = nepaliMonthsOrder.indexOf(a.month);
+                        const indexB = nepaliMonthsOrder.indexOf(b.month);
+                        // Sort Descending by Month Index (11 -> 0)
+                        return indexB - indexA;
+                    });
+
                     const uniqueId = `year-${year}`;
                     let yearGrandTotal = 0;
                     records.forEach(rec => { yearGrandTotal += rec.totals.grand; });
@@ -549,14 +565,12 @@
             }
         }
 
-        // NEW: Load Member Summary
         function loadSummary() {
             if (allRecordsData.length === 0) {
                 summaryContainer.innerHTML = '<div class="text-center text-muted py-5">No data available. Please load history first.</div>';
                 return;
             }
 
-            // Initialize Totals
             let memberStats = {};
             members.forEach(m => {
                 memberStats[m] = { deposit: 0, fine: 0, total: 0 };
@@ -564,7 +578,6 @@
 
             let grandTotalAll = 0;
 
-            // Calculate
             allRecordsData.forEach(rec => {
                 members.forEach(m => {
                     const data = rec.members[m];
@@ -579,7 +592,6 @@
                 });
             });
 
-            // Render Table
             let html = `
                 <div class="table-responsive">
                     <table class="summary-table">
@@ -624,7 +636,6 @@
             summaryContainer.innerHTML = html;
         }
 
-        // Tab Switching Logic
         window.switchTab = (tabName) => {
             const historyContent = document.getElementById('history-content');
             const summaryContent = document.getElementById('summary-content');
