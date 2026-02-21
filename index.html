@@ -57,17 +57,29 @@
         }
         .grand-total-val { font-size: 1.5rem; font-weight: 700; color: var(--primary-light); }
 
+        /* Tabs Styling */
+        .nav-tabs { border-bottom: 2px solid var(--border); margin-bottom: 1rem; }
+        .nav-tabs .nav-link {
+            border: none; color: var(--text-muted); font-weight: 600; padding: 10px 20px;
+            background: transparent; transition: all 0.2s; border-radius: 8px 8px 0 0;
+        }
+        .nav-tabs .nav-link:hover { color: var(--primary); background: rgba(15, 118, 110, 0.05); }
+        .nav-tabs .nav-link.active {
+            color: var(--primary); background: white; border-bottom: 3px solid var(--primary);
+            font-weight: 700;
+        }
+
         .accordion-item { border: none; margin-bottom: 1rem; border-radius: 12px !important; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
         .accordion-button { background-color: white; color: var(--text-main); font-weight: 600; padding: 1rem 1.5rem; box-shadow: none !important; font-size: 1.1rem; }
         .accordion-button:not(.collapsed) { background-color: var(--primary); color: white; }
         .accordion-button::after { filter: invert(1); opacity: 0.7; }
         .accordion-button:not(.collapsed)::after { filter: invert(1); }
         
-        .history-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        .history-table th { background: #f9fafb; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; padding: 10px; text-align: center; }
-        .history-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); font-size: 0.85rem; text-align: center; vertical-align: middle; }
-        .history-table tr:last-child td { border-bottom: none; }
-        .history-table tr:hover { background-color: #f9fafb; }
+        .history-table, .summary-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .history-table th, .summary-table th { background: #f9fafb; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; padding: 10px; text-align: center; }
+        .history-table td, .summary-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); font-size: 0.85rem; text-align: center; vertical-align: middle; }
+        .history-table tr:last-child td, .summary-table tr:last-child td { border-bottom: none; }
+        .history-table tr:hover, .summary-table tr:hover { background-color: #f9fafb; }
         
         .col-month { text-align: left !important; font-weight: 600; color: var(--primary); }
         .badge-loan { background-color: #e0e7ff; color: #4338ca; font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
@@ -86,7 +98,6 @@
         .detail-value { font-weight: 600; color: var(--text-main); }
         .positive-value { color: var(--primary); }
 
-        /* Yearly Total Row Style */
         .yearly-total-row {
             background-color: var(--text-main) !important;
             color: white;
@@ -104,9 +115,22 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+        
+        .summary-total-row {
+            background-color: var(--primary) !important;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+        .summary-total-row td { border-top: 2px solid var(--primary-light); }
+
         .date-group { display: flex; gap: 4px; }
         .date-group select { flex: 1; }
         .date-group select:first-child { flex: 0.8; }
+        
+        /* Tab Content Visibility */
+        .tab-content-section { display: none; }
+        .tab-content-section.active { display: block; }
     </style>
 </head>
 <body>
@@ -121,7 +145,7 @@
 
     <div class="container-fluid px-3 px-md-4">
         <div class="row">
-            <!-- Input Section -->
+            <!-- Input Section (Left) -->
             <div class="col-lg-4 col-xl-3 mb-4">
                 <div class="card sticky-top" style="top: 20px; z-index: 100;">
                     <div class="card-header">
@@ -168,17 +192,46 @@
                 </div>
             </div>
 
-            <!-- History Section -->
+            <!-- Right Section (Tabs) -->
             <div class="col-lg-8 col-xl-9">
                 <div class="card">
-                    <div class="card-header">
-                        <span><i class="fas fa-history me-2"></i>Records History</span>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="loadHistory()"><i class="fas fa-sync-alt"></i></button>
+                    <div class="card-header p-0">
+                        <!-- Tabs Navigation -->
+                        <ul class="nav nav-tabs w-100 m-0 p-3" id="mainTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-content" type="button" role="tab" onclick="switchTab('history')">
+                                    <i class="fas fa-history me-2"></i>Records History
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary-content" type="button" role="tab" onclick="switchTab('summary')">
+                                    <i class="fas fa-users me-2"></i>Member Summary
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                     <div class="card-body bg-white">
-                        <div id="historyContainer">
-                            <div class="text-center text-muted py-5">Loading records...</div>
+                        
+                        <!-- Tab Content: History -->
+                        <div id="history-content" class="tab-content-section active">
+                            <div class="d-flex justify-content-end mb-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="loadHistory()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                            </div>
+                            <div id="historyContainer">
+                                <div class="text-center text-muted py-5">Loading records...</div>
+                            </div>
                         </div>
+
+                        <!-- Tab Content: Summary -->
+                        <div id="summary-content" class="tab-content-section">
+                            <div class="d-flex justify-content-end mb-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="loadSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                            </div>
+                            <div id="summaryContainer">
+                                <div class="text-center text-muted py-5">Loading summary...</div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -208,15 +261,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // TODO: REPLACE WITH YOUR FIREBASE CONFIG
         const firebaseConfig = {
            apiKey: "AIzaSyCHgrUuln0hRyEVYzCo3DHjLq-ApcseTeI",
-  authDomain: "member-tracker-78f9f.firebaseapp.com",
-  projectId: "member-tracker-78f9f",
-  storageBucket: "member-tracker-78f9f.firebasestorage.app",
-  messagingSenderId: "368007807825",
-  appId: "1:368007807825:web:e80570af3567c4ed3a0970",
-  measurementId: "G-WEP639W4HY"
+           authDomain: "member-tracker-78f9f.firebaseapp.com",
+           projectId: "member-tracker-78f9f",
+           storageBucket: "member-tracker-78f9f.firebasestorage.app",
+           messagingSenderId: "368007807825",
+           appId: "1:368007807825:web:e80570af3567c4ed3a0970",
+           measurementId: "G-WEP639W4HY"
         };
 
         if (firebaseConfig.apiKey === "YOUR_API_KEY") {
@@ -245,6 +297,7 @@
         const grandTotalDisplay = document.getElementById('grandTotalDisplay');
         const messageArea = document.getElementById('messageArea');
         const historyContainer = document.getElementById('historyContainer');
+        const summaryContainer = document.getElementById('summaryContainer');
         const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
         const modalBody = document.getElementById('modalBody');
         const modalTitle = document.getElementById('modalTitle');
@@ -254,7 +307,9 @@
         const yearSelect = document.getElementById('entryYear');
         let currentDeleteId = null;
 
-        // Initialize Dropdowns
+        // Global Data Cache for Summary
+        let allRecordsData = [];
+
         function initDropdowns() {
             yearSelect.innerHTML = '';
             for (let y = 2075; y <= 2085; y++) {
@@ -266,10 +321,8 @@
             }
         }
 
-        // Helper: Generate Date Selectors HTML
         function createDateSelectors(prefix, member, data = {}) {
             const days = Array.from({length: 32}, (_, i) => i + 1);
-            
             const getSelected = (type, val) => (data[`${prefix}${type}`] == val ? 'selected' : '');
             const getDaySelected = (d) => (data[`${prefix}Day`] == d ? 'selected' : '');
 
@@ -291,67 +344,35 @@
             `;
         }
 
-        // Render Inputs
         function renderInputs(dataToFill = null) {
             membersContainer.innerHTML = '';
             members.forEach((member) => {
                 const d = dataToFill && dataToFill.members[member] ? dataToFill.members[member] : {};
-                
                 const div = document.createElement('div');
                 div.className = `member-card ${dataToFill ? 'edit-mode' : ''}`;
                 div.innerHTML = `
                     <div class="member-name"><i class="fas fa-user-circle text-primary"></i> ${member}</div>
-                    
                     <div class="section-title">Financials (Cash Flow)</div>
                     <div class="row g-2">
-                        <div class="col-6">
-                            <label class="input-label">Deposit</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="deposit" value="${d.deposit || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Interest</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="interest" value="${d.interest || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Installment</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="installment" value="${d.installment || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Fine</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="fine" value="${d.fine || 0}">
-                        </div>
+                        <div class="col-6"><label class="input-label">Deposit</label><input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="deposit" value="${d.deposit || 0}"></div>
+                        <div class="col-6"><label class="input-label">Interest</label><input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="interest" value="${d.interest || 0}"></div>
+                        <div class="col-6"><label class="input-label">Installment</label><input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="installment" value="${d.installment || 0}"></div>
+                        <div class="col-6"><label class="input-label">Fine</label><input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="fine" value="${d.fine || 0}"></div>
                     </div>
-
                     <div class="section-title">Loan Record (Info Only)</div>
                     <div class="row g-2">
-                        <div class="col-6">
-                            <label class="input-label">Loan Amount</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="loanAmount" value="${d.loanAmount || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Rate (%)</label>
-                            <input type="number" step="0.1" class="form-control form-control-sm calc-input" data-member="${member}" data-type="interestRate" value="${d.interestRate || 0}">
-                        </div>
-                        <div class="col-12">
-                            <label class="input-label">Taken Date</label>
-                            ${createDateSelectors('taken', member, d)}
-                        </div>
-                        <div class="col-12">
-                            <label class="input-label">Maturity Date</label>
-                            ${createDateSelectors('maturity', member, d)}
-                        </div>
+                        <div class="col-6"><label class="input-label">Loan Amount</label><input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="loanAmount" value="${d.loanAmount || 0}"></div>
+                        <div class="col-6"><label class="input-label">Rate (%)</label><input type="number" step="0.1" class="form-control form-control-sm calc-input" data-member="${member}" data-type="interestRate" value="${d.interestRate || 0}"></div>
+                        <div class="col-12"><label class="input-label">Taken Date</label>${createDateSelectors('taken', member, d)}</div>
+                        <div class="col-12"><label class="input-label">Maturity Date</label>${createDateSelectors('maturity', member, d)}</div>
                     </div>
                 `;
                 membersContainer.appendChild(div);
             });
-
-            document.querySelectorAll('.calc-input').forEach(input => {
-                input.addEventListener('input', calculateTotals);
-            });
+            document.querySelectorAll('.calc-input').forEach(input => input.addEventListener('input', calculateTotals));
             calculateTotals();
         }
 
-        // Calculate Totals
         function calculateTotals() {
             let grandTotal = 0;
             members.forEach(member => {
@@ -367,19 +388,14 @@
             return grandTotal;
         }
 
-        // Helper: Get Date String from Selects
         function getDateFromSelects(prefix, member) {
             const day = document.querySelector(`.date-part[data-member="${member}"][data-prefix="${prefix}"][data-type="day"]`)?.value;
             const month = document.querySelector(`.date-part[data-member="${member}"][data-prefix="${prefix}"][data-type="month"]`)?.value;
             const year = document.querySelector(`.date-part[data-member="${member}"][data-prefix="${prefix}"][data-type="year"]`)?.value;
-            
-            if (day && month && year) {
-                return `${day} ${month}, ${year}`;
-            }
+            if (day && month && year) return `${day} ${month}, ${year}`;
             return '';
         }
 
-        // Save/Update
         saveBtn.addEventListener('click', async () => {
             const month = document.getElementById('nepaliMonth').value;
             const year = document.getElementById('entryYear').value;
@@ -390,26 +406,17 @@
 
             members.forEach(member => {
                 const getVal = (type) => parseFloat(document.querySelector(`.calc-input[data-member="${member}"][data-type="${type}"]`).value) || 0;
-                
                 const deposit = getVal('deposit');
                 const interest = getVal('interest');
                 const installment = getVal('installment');
                 const fine = getVal('fine');
                 const loanAmount = getVal('loanAmount');
                 const interestRate = getVal('interestRate');
-                
                 const takenDate = getDateFromSelects('taken', member);
                 const maturityDate = getDateFromSelects('maturity', member);
-
                 const cashTotal = deposit + interest + installment + fine; 
 
-                memberData[member] = { 
-                    deposit, interest, installment, fine, 
-                    loanAmount, interestRate, 
-                    takenDate, maturityDate,
-                    cashTotal 
-                };
-
+                memberData[member] = { deposit, interest, installment, fine, loanAmount, interestRate, takenDate, maturityDate, cashTotal };
                 sums.deposit += deposit; sums.interest += interest; sums.installment += installment; sums.fine += fine;
                 if(loanAmount > 0) sums.loanCount++;
             });
@@ -418,14 +425,7 @@
 
             setLoading(true);
             try {
-                const payload = {
-                    month, year,
-                    timestamp: new Date(),
-                    members: memberData,
-                    totals: { ...sums, grand: grandTotal },
-                    updatedAt: new Date()
-                };
-
+                const payload = { month, year, timestamp: new Date(), members: memberData, totals: { ...sums, grand: grandTotal }, updatedAt: new Date() };
                 if (currentEditId) {
                     await updateDoc(doc(db, collectionName, currentEditId), payload);
                     showMessage("Updated!", "success");
@@ -437,7 +437,11 @@
                     showMessage("Saved!", "success");
                     renderInputs(null);
                 }
+                // Refresh both tabs
                 loadHistory();
+                if(document.getElementById('summary-content').classList.contains('active')) {
+                    loadSummary();
+                }
             } catch (error) {
                 console.error(error);
                 showMessage("Error: " + error.message, "danger");
@@ -446,13 +450,13 @@
             }
         });
 
-        // Load History with Yearly Totals
         async function loadHistory() {
             historyContainer.innerHTML = '<div class="text-center text-muted py-5"><div class="spinner-border text-primary"></div></div>';
             try {
                 const q = query(collection(db, collectionName), orderBy("timestamp", "desc"));
                 const snapshot = await getDocs(q);
                 historyContainer.innerHTML = '';
+                allRecordsData = []; // Cache for summary
 
                 if(snapshot.empty) {
                     historyContainer.innerHTML = '<div class="text-center text-muted py-5">No records found.</div>';
@@ -464,18 +468,16 @@
                     const data = docSnap.data();
                     const y = data.year;
                     if(!grouped[y]) grouped[y] = [];
-                    grouped[y].push({ id: docSnap.id, ...data });
+                    const record = { id: docSnap.id, ...data };
+                    grouped[y].push(record);
+                    allRecordsData.push(record); // Store for summary
                 });
 
                 Object.keys(grouped).sort((a,b) => b-a).forEach(year => {
                     const records = grouped[year];
                     const uniqueId = `year-${year}`;
-                    
-                    // Calculate Yearly Grand Total
                     let yearGrandTotal = 0;
-                    records.forEach(rec => {
-                        yearGrandTotal += rec.totals.grand;
-                    });
+                    records.forEach(rec => { yearGrandTotal += rec.totals.grand; });
 
                     const accordionItem = document.createElement('div');
                     accordionItem.className = 'accordion-item';
@@ -503,7 +505,6 @@
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
-                                        <!-- Yearly Total Row will be appended here -->
                                         <tfoot>
                                             <tr class="yearly-total-row">
                                                 <td colspan="5" class="yearly-total-label">Year ${year} Grand Total</td>
@@ -521,7 +522,6 @@
                         const t = rec.totals;
                         const hasLoan = t.loanCount > 0;
                         const loanBadge = hasLoan ? `<span class="badge-loan" onclick="window.showLoanDetails('${rec.id}')"><i class="fas fa-file-invoice-dollar me-1"></i>${t.loanCount} Active</span>` : '<span class="text-muted small">-</span>';
-                        
                         const row = `
                             <tr>
                                 <td class="col-month">${rec.month}</td>
@@ -549,7 +549,102 @@
             }
         }
 
-        // Edit Logic
+        // NEW: Load Member Summary
+        function loadSummary() {
+            if (allRecordsData.length === 0) {
+                summaryContainer.innerHTML = '<div class="text-center text-muted py-5">No data available. Please load history first.</div>';
+                return;
+            }
+
+            // Initialize Totals
+            let memberStats = {};
+            members.forEach(m => {
+                memberStats[m] = { deposit: 0, fine: 0, total: 0 };
+            });
+
+            let grandTotalAll = 0;
+
+            // Calculate
+            allRecordsData.forEach(rec => {
+                members.forEach(m => {
+                    const data = rec.members[m];
+                    if (data) {
+                        const dep = data.deposit || 0;
+                        const fn = data.fine || 0;
+                        memberStats[m].deposit += dep;
+                        memberStats[m].fine += fn;
+                        memberStats[m].total += (dep + fn);
+                        grandTotalAll += (dep + fn);
+                    }
+                });
+            });
+
+            // Render Table
+            let html = `
+                <div class="table-responsive">
+                    <table class="summary-table">
+                        <thead>
+                            <tr>
+                                <th class="col-month" style="text-align:left !important;">Member Name</th>
+                                <th class="text-primary">Total Deposit</th>
+                                <th class="text-danger">Total Fine</th>
+                                <th class="text-dark" style="background:#eef2ff !important;">Subtotal (Dep+Fine)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            members.forEach(m => {
+                const stats = memberStats[m];
+                html += `
+                    <tr>
+                        <td class="col-month" style="text-align:left !important; font-weight:600;">${m}</td>
+                        <td class="text-primary fw-bold">${stats.deposit.toLocaleString()}</td>
+                        <td class="text-danger fw-bold">${stats.fine.toLocaleString()}</td>
+                        <td class="fw-bold" style="background:#f9fafb;">${stats.total.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                        <tfoot>
+                            <tr class="summary-total-row">
+                                <td class="text-end" style="text-align:right !important; padding-right:15px;">GRAND TOTAL (All Members)</td>
+                                <td colspan="3" style="font-size:1.2rem; text-align:center;">NPR ${grandTotalAll.toLocaleString()}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="alert alert-info mt-3 small">
+                    <i class="fas fa-info-circle me-1"></i> Note: This summary includes <strong>Deposit + Fine</strong> only. Interest and Installments are excluded as per requirements.
+                </div>
+            `;
+
+            summaryContainer.innerHTML = html;
+        }
+
+        // Tab Switching Logic
+        window.switchTab = (tabName) => {
+            const historyContent = document.getElementById('history-content');
+            const summaryContent = document.getElementById('summary-content');
+            const historyTab = document.getElementById('history-tab');
+            const summaryTab = document.getElementById('summary-tab');
+
+            if (tabName === 'history') {
+                historyContent.classList.add('active');
+                summaryContent.classList.remove('active');
+                historyTab.classList.add('active');
+                summaryTab.classList.remove('active');
+            } else {
+                historyContent.classList.remove('active');
+                summaryContent.classList.add('active');
+                historyTab.classList.remove('active');
+                summaryTab.classList.add('active');
+                loadSummary();
+            }
+        };
+
         window.editRecord = (id) => {
             getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
             .then(snap => {
@@ -560,7 +655,6 @@
                     document.getElementById('nepaliMonth').value = data.month;
                     document.getElementById('entryYear').value = data.year;
                     renderInputs(data);
-                    
                     formTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Edit Entry';
                     cancelEditBtn.classList.remove('d-none');
                     saveBtn.classList.replace('btn-primary-custom', 'btn-warning');
@@ -585,17 +679,14 @@
             messageArea.innerText = "";
         };
 
-        // Show Loan Details
         window.showLoanDetails = (id) => {
             getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
             .then(snap => {
                 const target = snap.docs.find(d => d.id === id);
                 if(!target) return;
                 const data = target.data();
-                
                 let html = `<h6 class="mb-3 text-center text-primary">Loan Records for ${data.month} ${data.year}</h6>`;
                 let found = false;
-                
                 for (const [name, vals] of Object.entries(data.members)) {
                     if(vals.loanAmount > 0) {
                         found = true;
@@ -613,7 +704,6 @@
                     }
                 }
                 if(!found) html += '<p class="text-center text-muted">No loans recorded for this month.</p>';
-                
                 modalBody.innerHTML = html;
                 modalTitle.innerText = "Loan Information";
                 modalDeleteBtn.classList.add('d-none');
@@ -621,19 +711,15 @@
             });
         };
 
-        // Full View Details
         window.viewDetails = (id) => {
             getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
             .then(snap => {
                 const target = snap.docs.find(d => d.id === id);
                 if(!target) return;
                 const data = target.data();
-                
                 let html = `<h5 class="mb-4 text-center border-bottom pb-2">${data.month} ${data.year}</h5>`;
-                
                 for (const [name, vals] of Object.entries(data.members)) {
                     if(vals.cashTotal === 0 && vals.loanAmount === 0) continue;
-
                     html += `
                         <div class="card mb-3 shadow-sm">
                             <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
@@ -662,9 +748,7 @@
                         </div>
                     `;
                 }
-                
                 html += `<div class="alert alert-success mt-3 mb-0 text-center fw-bold fs-5">Grand Total: NPR ${data.totals.grand.toLocaleString()}</div>`;
-                
                 modalBody.innerHTML = html;
                 modalTitle.innerText = "Full Record Details";
                 modalDeleteBtn.classList.remove('d-none');
@@ -678,6 +762,7 @@
                 deleteDoc(doc(db, collectionName, id)).then(() => {
                     if(currentEditId === id) cancelEdit();
                     loadHistory();
+                    if(document.getElementById('summary-content').classList.contains('active')) loadSummary();
                     detailModal.hide();
                     showMessage("Deleted", "warning");
                 }).catch(e => showMessage(e.message, "danger"));
@@ -697,17 +782,16 @@
             setTimeout(() => messageArea.textContent = '', 3000);
         }
 
-        // Init
         initDropdowns();
         renderInputs();
         loadHistory();
 
-        // Expose globals
         window.editRecord = editRecord;
         window.cancelEdit = cancelEdit;
         window.showLoanDetails = showLoanDetails;
         window.viewDetails = viewDetails;
         window.confirmDelete = confirmDelete;
+        window.switchTab = switchTab;
     </script>
 </body>
 </html>
