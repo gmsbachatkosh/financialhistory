@@ -41,11 +41,11 @@
         }
 
         /* App Styles */
-        #app-section { display: none; } /* Hidden by default */
+        #app-section { display: none; }
         
         .header-section {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white; padding: 1.5rem 0; margin-bottom: 2rem;
+            color: white; padding: 1.5rem 0; margin-bottom: 1rem;
             border-radius: 0 0 25px 25px; box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.4);
         }
         .header-title { font-weight: 800; letter-spacing: -0.5px; font-size: 1.8rem; }
@@ -158,6 +158,95 @@
         body.is-admin .admin-only-btn { display: block !important; }
         body.is-admin .admin-only-flex { display: flex !important; }
         body.is-admin .admin-only-table-cell { display: table-cell !important; }
+
+        /* Member Link Style */
+        .member-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .member-link:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+
+        /* Bank Details Tab Styling */
+        .bank-details-container {
+            padding: 2rem;
+            text-align: center;
+        }
+        .bank-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-left: 6px solid var(--primary);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            text-align: left;
+        }
+        .bank-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .bank-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            padding: 0.8rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .bank-label {
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        .bank-value {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            min-width: 150px;
+            text-align: right;
+        }
+        .bank-value.copyable {
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+        .bank-value.copyable:hover {
+            background: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .copy-icon {
+            margin-left: 8px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        .bank-note {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -202,7 +291,7 @@
         </div>
     </div>
 
-    <!-- APP SECTION (Hidden until logged in) -->
+    <!-- APP SECTION -->
     <div id="app-section">
         <!-- Header -->
         <div class="header-section text-center">
@@ -211,7 +300,7 @@
                     <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>
                     <p class="header-subtitle mb-0">Monthly Contributions & Loan Records</p>
                 </div>
-                <!-- Logout Button (Visible for BOTH Admin and Guest) -->
+                <!-- Logout Button -->
                 <div class="position-absolute top-0 end-0 p-3">
                     <button onclick="logout()" class="btn btn-sm btn-outline-light" id="logoutBtn">
                         <i class="fas fa-sign-out-alt me-1"></i> <span id="logoutText">Logout</span>
@@ -289,6 +378,11 @@
                                         <i class="fas fa-hand-holding-usd me-2"></i>Loan Summary
                                     </button>
                                 </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="bank-tab" data-bs-toggle="tab" data-bs-target="#bank-content" type="button" role="tab" onclick="switchTab('bank')">
+                                        <i class="fas fa-university me-2"></i>Bank Details
+                                    </button>
+                                </li>
                             </ul>
                         </div>
                         <div class="card-body bg-white">
@@ -320,6 +414,34 @@
                                 </div>
                             </div>
 
+                            <!-- NEW: Bank Details Tab Content -->
+                            <div id="bank-content" class="tab-content-section">
+                                <div class="bank-details-container">
+                                    <div class="bank-card">
+                                        <div class="bank-title">
+                                            <i class="fas fa-university"></i> GMS Kosh Bank A/C Details
+                                        </div>
+                                        <div class="bank-row">
+                                            <span class="bank-label">Bank Name:</span>
+                                            <span class="bank-value">Himalayan Bank Limited</span>
+                                        </div>
+                                        <div class="bank-row">
+                                            <span class="bank-label">A/C Number:</span>
+                                            <span class="bank-value copyable" onclick="copyToClipboard('21254325340012')" title="Click to copy">
+                                                21254325340012 <i class="far fa-copy copy-icon"></i>
+                                            </span>
+                                        </div>
+                                        <div class="bank-row">
+                                            <span class="bank-label">Account Name:</span>
+                                            <span class="bank-value">Bindu/Anil Maharjan</span>
+                                        </div>
+                                        <div class="bank-note">
+                                            <i class="fas fa-info-circle me-1"></i> Please use the account number above for all deposits. Click on the account number to copy.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -327,7 +449,7 @@
         </div>
     </div>
 
-    <!-- Detail Modal -->
+    <!-- Detail Modal (Record Details) -->
     <div class="modal fade" id="detailModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -338,8 +460,25 @@
                 <div class="modal-body" id="modalBody" style="max-height: 70vh; overflow-y: auto;"></div>
                 <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <!-- Delete Button is Admin Only -->
                     <button type="button" class="btn btn-danger admin-only" id="modalDeleteBtn">Delete Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Member Details Modal -->
+    <div class="modal fade" id="memberDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-id-card me-2"></i>Member Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="memberModalBody">
+                    <!-- Content injected via JS -->
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -372,6 +511,16 @@
             "Rajeep Maharjan", "Sajina Barahi", "Supreme Chitrakar"
         ];
 
+        // Member Static Data (For Popup)
+        const memberDetailsData = {
+            "Anil Maharjan": { address: "Gwarko-07, Lalitpur", contact: "9808276033", email: "anilmaharjan@live.com", dob: "11-30-1990", joined: "2079 Bhadra" },
+            "Bindu Maharjan": { address: "Gwarko-07, Lalitpur", contact: "98XXXXXXXX", email: "bindu@example.com", dob: "XX-XX-XXXX", joined: "2079 Bhadra" },
+            "Manisha Maharjan": { address: "Lalitpur", contact: "98XXXXXXXX", email: "manisha@example.com", dob: "XX-XX-XXXX", joined: "2079 Bhadra" },
+            "Rajeep Maharjan": { address: "Lalitpur", contact: "98XXXXXXXX", email: "rajeep@example.com", dob: "XX-XX-XXXX", joined: "2079 Bhadra" },
+            "Sajina Barahi": { address: "Lalitpur", contact: "98XXXXXXXX", email: "sajina@example.com", dob: "XX-XX-XXXX", joined: "2079 Bhadra" },
+            "Supreme Chitrakar": { address: "Lalitpur", contact: "98XXXXXXXX", email: "supreme@example.com", dob: "XX-XX-XXXX", joined: "2079 Bhadra" }
+        };
+
         const nepaliMonthsOrder = [
             "Baishakh", "Jestha", "Ashadh", "Shrawan", "Bhadra", "Ashwin",
             "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"
@@ -391,6 +540,7 @@
         const summaryContainer = document.getElementById('summaryContainer');
         const loanContainer = document.getElementById('loanContainer');
         const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+        const memberDetailModal = new bootstrap.Modal(document.getElementById('memberDetailModal'));
         const modalBody = document.getElementById('modalBody');
         const modalTitle = document.getElementById('modalTitle');
         const modalDeleteBtn = document.getElementById('modalDeleteBtn');
@@ -403,35 +553,28 @@
         let allRecordsData = [];
 
         // --- AUTHENTICATION LOGIC ---
-
-        // Check Auth State
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in (Admin or Guest)
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('app-section').style.display = 'block';
                 
-                // Check if Admin (has email) or Guest (anonymous)
                 if (user.isAnonymous) {
                     document.body.classList.remove('is-admin');
-                    logoutText.textContent = "Exit"; // Change text for guests
+                    logoutText.textContent = "Exit";
                     logoutBtn.title = "Exit Guest Mode";
                 } else {
                     document.body.classList.add('is-admin');
-                    logoutText.textContent = "Logout"; // Change text for admins
+                    logoutText.textContent = "Logout";
                     logoutBtn.title = "Logout Admin Account";
                 }
-                
                 initApp();
             } else {
-                // User is signed out
                 document.getElementById('login-section').style.display = 'flex';
                 document.getElementById('app-section').style.display = 'none';
                 document.body.classList.remove('is-admin');
             }
         });
 
-        // Admin Login Form Submit
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -445,32 +588,22 @@
             errorDiv.classList.add('d-none');
 
             signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    btnText.textContent = "Login as Admin";
-                    loader.classList.add('d-none');
-                })
+                .then(() => { btnText.textContent = "Login as Admin"; loader.classList.add('d-none'); })
                 .catch((error) => {
                     btnText.textContent = "Login as Admin";
                     loader.classList.add('d-none');
                     errorDiv.textContent = "Invalid Email or Password.";
                     errorDiv.classList.remove('d-none');
-                    console.error(error);
                 });
         });
 
-        // Guest Login Function
         window.loginAsGuest = () => {
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Entering...';
             btn.disabled = true;
-
             signInAnonymously(auth)
-                .then((userCredential) => {
-                    // Signed in successfully as guest
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                })
+                .then(() => { btn.innerHTML = originalText; btn.disabled = false; })
                 .catch((error) => {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -478,13 +611,8 @@
                 });
         };
 
-        // Logout Function
         window.logout = () => {
-            signOut(auth).then(() => {
-                location.reload();
-            }).catch((error) => {
-                console.error("Logout error", error);
-            });
+            signOut(auth).then(() => { location.reload(); });
         };
 
         function initApp() {
@@ -508,7 +636,6 @@
             const days = Array.from({length: 32}, (_, i) => i + 1);
             const getSelected = (type, val) => (data[`${prefix}${type}`] == val ? 'selected' : '');
             const getDaySelected = (d) => (data[`${prefix}Day`] == d ? 'selected' : '');
-
             return `
                 <div class="date-group">
                     <select class="form-select form-select-sm date-part" data-member="${member}" data-prefix="${prefix}" data-type="day">
@@ -601,12 +728,7 @@
         const todayNP = getCurrentNepaliDateNum();
 
         saveBtn.addEventListener('click', async () => {
-            // Double check admin status before saving
-            if (auth.currentUser.isAnonymous) {
-                showMessage("Guests cannot save data.", "danger");
-                return;
-            }
-
+            if (auth.currentUser.isAnonymous) { showMessage("Guests cannot save data.", "danger"); return; }
             const month = document.getElementById('nepaliMonth').value;
             const year = document.getElementById('entryYear').value;
             if(!year) { showMessage("Enter Year", "danger"); return; }
@@ -716,13 +838,14 @@
                                                 <th>Total</th>
                                                 <th>Loans</th>
                                                 <th class="admin-only admin-only-table-cell">Action</th>
+                                                <th>View</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
                                         <tfoot>
                                             <tr class="yearly-total-row">
-                                                <td colspan="5" class="yearly-total-label">Year ${year} Grand Total</td>
-                                                <td colspan="3" style="text-align: center; font-size: 1.1rem;">NPR ${yearGrandTotal.toLocaleString()}</td>
+                                                <td colspan="6" class="yearly-total-label">Year ${year} Grand Total</td>
+                                                <td colspan="2" style="text-align: center; font-size: 1.1rem;">NPR ${yearGrandTotal.toLocaleString()}</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -741,12 +864,12 @@
                         if (!auth.currentUser.isAnonymous) {
                             actionButtons = `
                                 <button class="btn btn-action btn-outline-primary admin-only" onclick="window.editRecord('${rec.id}')"><i class="fas fa-pen"></i></button>
-                                <button class="btn btn-action btn-outline-secondary" onclick="window.viewDetails('${rec.id}')"><i class="fas fa-eye"></i></button>
                                 <button class="btn btn-action btn-outline-danger admin-only" onclick="window.confirmDelete('${rec.id}')"><i class="fas fa-trash"></i></button>
                             `;
-                        } else {
-                             actionButtons = `<button class="btn btn-action btn-outline-secondary" onclick="window.viewDetails('${rec.id}')"><i class="fas fa-eye"></i></button>`;
                         }
+
+                        // View Button (Visible to ALL)
+                        const viewButton = `<button class="btn btn-action btn-outline-secondary" onclick="window.viewDetails('${rec.id}')"><i class="fas fa-eye"></i></button>`;
 
                         const row = `
                             <tr>
@@ -758,6 +881,7 @@
                                 <td class="fw-bold text-dark">${t.grand.toLocaleString()}</td>
                                 <td>${loanBadge}</td>
                                 <td class="admin-only admin-only-table-cell">${actionButtons}</td>
+                                <td>${viewButton}</td>
                             </tr>
                         `;
                         tbody.innerHTML += row;
@@ -797,7 +921,15 @@
             let html = `<div class="table-responsive"><table class="summary-table"><thead><tr><th class="col-month" style="text-align:left !important;">Member Name</th><th class="text-primary">Total Deposit</th><th class="text-danger">Total Fine</th><th class="text-dark" style="background:#eef2ff !important;">Subtotal (Dep+Fine)</th></tr></thead><tbody>`;
             members.forEach(m => {
                 const stats = memberStats[m];
-                html += `<tr><td class="col-month" style="text-align:left !important; font-weight:600;">${m}</td><td class="text-primary fw-bold">${stats.deposit.toLocaleString()}</td><td class="text-danger fw-bold">${stats.fine.toLocaleString()}</td><td class="fw-bold" style="background:#f9fafb;">${stats.total.toLocaleString()}</td></tr>`;
+                // Make name clickable
+                html += `<tr>
+                    <td class="col-month" style="text-align:left !important; font-weight:600;">
+                        <span class="member-link" onclick="window.showMemberDetails('${m}')"><i class="fas fa-user-circle me-1"></i>${m}</span>
+                    </td>
+                    <td class="text-primary fw-bold">${stats.deposit.toLocaleString()}</td>
+                    <td class="text-danger fw-bold">${stats.fine.toLocaleString()}</td>
+                    <td class="fw-bold" style="background:#f9fafb;">${stats.total.toLocaleString()}</td>
+                </tr>`;
             });
             html += `</tbody><tfoot><tr class="summary-total-row"><td class="text-end" style="text-align:right !important; padding-right:15px;">GRAND TOTAL (All Members)</td><td colspan="3" style="font-size:1.2rem; text-align:center;">NPR ${grandTotalAll.toLocaleString()}</td></tr></tfoot></table></div>`;
             summaryContainer.innerHTML = html;
@@ -808,14 +940,11 @@
                 loanContainer.innerHTML = '<div class="text-center text-muted py-5">No data available.</div>';
                 return;
             }
-
             let chronologicalData = [...allRecordsData].sort((a, b) => {
                 if (a.year !== b.year) return a.year - b.year;
                 return nepaliMonthsOrder.indexOf(a.month) - nepaliMonthsOrder.indexOf(b.month);
             });
-
             let loans = []; 
-
             chronologicalData.forEach(rec => {
                 members.forEach(m => {
                     const data = rec.members[m];
@@ -834,14 +963,11 @@
                     }
                 });
             });
-
             loans.forEach(loan => {
                 chronologicalData.forEach(rec => {
                     const rMonthIdx = nepaliMonthsOrder.indexOf(rec.month) + 1;
                     const recNum = rec.year * 10000 + rMonthIdx * 100 + 15; 
-
                     const data = rec.members[loan.member];
-                    
                     if (data && data.installment > 0 && recNum >= loan.takenDateNum) {
                         loan.totalPaid += data.installment;
                     }
@@ -866,7 +992,6 @@
             loans.forEach(loan => {
                 const balance = loan.loanAmount - loan.totalPaid;
                 let statusBadge = '';
-                
                 if (loan.totalPaid >= loan.loanAmount) {
                     statusBadge = '<span class="badge status-closed">Closed</span>';
                 } else if (todayNP > loan.maturityDateNum) {
@@ -874,7 +999,6 @@
                 } else {
                     statusBadge = '<span class="badge status-active">Active</span>';
                 }
-
                 html += `
                     <tr>
                         <td class="col-month" style="text-align:left !important; font-weight:600;">${loan.member}</td>
@@ -887,20 +1011,18 @@
                     </tr>
                 `;
             });
-
             html += `</tbody></table></div>`;
             loanContainer.innerHTML = html;
         }
 
         window.switchTab = (tabName) => {
-            const sections = ['history', 'summary', 'loan'];
+            const sections = ['history', 'summary', 'loan', 'bank'];
             sections.forEach(t => {
                 document.getElementById(`${t}-content`).classList.remove('active');
                 document.getElementById(`${t}-tab`).classList.remove('active');
             });
             document.getElementById(`${tabName}-content`).classList.add('active');
             document.getElementById(`${tabName}-tab`).classList.add('active');
-            
             if (tabName === 'summary') loadSummary();
             if (tabName === 'loan') loadLoanSummary();
         };
@@ -1013,16 +1135,40 @@
                 modalBody.innerHTML = html;
                 modalTitle.innerText = "Full Record Details";
                 
-                // Show delete button only if NOT anonymous (Admin)
                 if (!auth.currentUser.isAnonymous) {
                     modalDeleteBtn.classList.remove('d-none');
                     currentDeleteId = id;
                 } else {
                     modalDeleteBtn.classList.add('d-none');
                 }
-                
                 detailModal.show();
             });
+        };
+
+        // NEW: Show Member Details Popup
+        window.showMemberDetails = (memberName) => {
+            const details = memberDetailsData[memberName];
+            if (!details) {
+                alert("Details not found for this member.");
+                return;
+            }
+            const html = `
+                <div class="text-center mb-3">
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 2rem; color: var(--primary);">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <table class="table table-borderless">
+                    <tr><td class="fw-bold">Name:</td><td class="text-end">${memberName}</td></tr>
+                    <tr><td class="fw-bold">Address:</td><td class="text-end">${details.address}</td></tr>
+                    <tr><td class="fw-bold">Contact:</td><td class="text-end">${details.contact}</td></tr>
+                    <tr><td class="fw-bold">Email:</td><td class="text-end">${details.email}</td></tr>
+                    <tr><td class="fw-bold">DOB:</td><td class="text-end">${details.dob}</td></tr>
+                    <tr><td class="fw-bold">Kosh Joined Date:</td><td class="text-end">${details.joined}</td></tr>
+                </table>
+            `;
+            document.getElementById('memberModalBody').innerHTML = html;
+            memberDetailModal.show();
         };
 
         window.confirmDelete = (id) => {
@@ -1052,15 +1198,25 @@
             setTimeout(() => messageArea.textContent = '', 3000);
         }
 
+        window.copyToClipboard = (text) => {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Account Number Copied: " + text);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        };
+
         // Expose globals
         window.editRecord = editRecord;
         window.cancelEdit = cancelEdit;
         window.showLoanDetails = showLoanDetails;
         window.viewDetails = viewDetails;
+        window.showMemberDetails = showMemberDetails;
         window.confirmDelete = confirmDelete;
         window.switchTab = switchTab;
         window.logout = logout;
         window.loginAsGuest = loginAsGuest;
+        window.copyToClipboard = copyToClipboard;
     </script>
 </body>
 </html>
