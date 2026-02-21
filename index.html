@@ -23,13 +23,33 @@
 
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; color: var(--text-main); }
         
+        /* Login Screen Styles */
+        #login-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        /* App Styles */
+        #app-section { display: none; } /* Hidden by default */
+        
         .header-section {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white; padding: 2.5rem 0; margin-bottom: 2rem;
+            color: white; padding: 1.5rem 0; margin-bottom: 2rem;
             border-radius: 0 0 25px 25px; box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.4);
         }
-        .header-title { font-weight: 800; letter-spacing: -0.5px; font-size: 2rem; }
-        .header-subtitle { opacity: 0.9; font-weight: 300; }
+        .header-title { font-weight: 800; letter-spacing: -0.5px; font-size: 1.8rem; }
+        .header-subtitle { opacity: 0.9; font-weight: 300; font-size: 0.9rem; }
 
         .card { border: none; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background: var(--card-bg); margin-bottom: 1.5rem; }
         .card-header { background: transparent; border-bottom: 1px solid var(--border); padding: 1.25rem; font-weight: 700; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
@@ -55,7 +75,6 @@
         }
         .grand-total-val { font-size: 1.5rem; font-weight: 700; color: var(--primary-light); }
 
-        /* Tabs Styling */
         .nav-tabs { border-bottom: 2px solid var(--border); margin-bottom: 1rem; }
         .nav-tabs .nav-link {
             border: none; color: var(--text-muted); font-weight: 600; padding: 10px 20px;
@@ -129,122 +148,179 @@
         .tab-content-section { display: none; }
         .tab-content-section.active { display: block; }
 
-        /* Loan Status Badges */
         .status-active { background-color: #d1fae5; color: #065f46; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
         .status-closed { background-color: #e5e7eb; color: #374151; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
         .status-overdue { background-color: #fee2e2; color: #991b1b; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
+
+        /* Utility to hide elements for non-admins/guests */
+        .admin-only { display: none !important; }
+        body.is-admin .admin-only { display: inline-block !important; }
+        body.is-admin .admin-only-btn { display: block !important; }
+        body.is-admin .admin-only-flex { display: flex !important; }
+        body.is-admin .admin-only-table-cell { display: table-cell !important; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <div class="header-section text-center">
-        <div class="container">
-            <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>
-            <p class="header-subtitle mb-0">Monthly Contributions & Loan Records</p>
+    <!-- LOGIN SECTION -->
+    <div id="login-section">
+        <div class="login-card text-center">
+            <h2 class="mb-4 text-primary fw-bold"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h2>
+            <p class="text-muted mb-4">Select Login Type</p>
+            
+            <div id="loginError" class="alert alert-danger d-none small"></div>
+
+            <!-- Admin Login Form -->
+            <form id="loginForm" class="mb-4">
+                <div class="mb-3 text-start">
+                    <label class="form-label small fw-bold">Admin Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="admin@example.com" required>
+                </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label small fw-bold">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary-custom w-100 mb-2">
+                    <span id="loginBtnText">Login as Admin</span>
+                    <span id="loginLoader" class="spinner-border spinner-border-sm d-none ms-2"></span>
+                </button>
+            </form>
+
+            <div class="position-relative my-3">
+                <hr class="text-muted">
+                <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 small text-muted">OR</span>
+            </div>
+
+            <!-- Guest Login Button -->
+            <button onclick="loginAsGuest()" class="btn btn-outline-secondary w-100 py-2">
+                <i class="fas fa-user-eye me-2"></i> Enter as Guest (View Only)
+            </button>
+            
+            <div class="mt-4 small text-muted">
+                Guests can view records but cannot add, edit, or delete data.
+            </div>
         </div>
     </div>
 
-    <div class="container-fluid px-3 px-md-4">
-        <div class="row">
-            <!-- Input Section (Left) -->
-            <div class="col-lg-4 col-xl-3 mb-4">
-                <div class="card sticky-top" style="top: 20px; z-index: 100;">
-                    <div class="card-header">
-                        <span id="formTitle"><i class="fas fa-plus-circle me-2"></i>Add Entry</span>
-                        <button id="cancelEditBtn" class="btn btn-sm btn-outline-danger d-none" onclick="cancelEdit()">Cancel</button>
-                    </div>
-                    <div class="card-body">
-                        <div id="debugError" class="alert alert-danger small py-2 d-none"></div>
-
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <label class="input-label">Month</label>
-                                <select id="nepaliMonth" class="form-select form-select-sm">
-                                    <option value="Baishakh">Baishakh</option><option value="Jestha">Jestha</option>
-                                    <option value="Ashadh">Ashadh</option><option value="Shrawan">Shrawan</option>
-                                    <option value="Bhadra">Bhadra</option><option value="Ashwin">Ashwin</option>
-                                    <option value="Kartik">Kartik</option><option value="Mangsir">Mangsir</option>
-                                    <option value="Poush">Poush</option><option value="Magh">Magh</option>
-                                    <option value="Falgun">Falgun</option><option value="Chaitra">Chaitra</option>
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label class="input-label">Year</label>
-                                <select id="entryYear" class="form-select form-select-sm"></select>
-                            </div>
-                        </div>
-
-                        <div id="membersInputContainer" style="max-height: 55vh; overflow-y: auto; padding-right: 2px;">
-                            <!-- Dynamic Inputs -->
-                        </div>
-
-                        <div class="totals-bar">
-                            <span class="small fw-bold">Grand Total (Cash)</span>
-                            <span class="grand-total-val" id="grandTotalDisplay">0</span>
-                        </div>
-                        <small class="text-muted d-block mt-1 text-center" style="font-size: 0.7rem;">*Excludes Loan Principal</small>
-
-                        <button id="saveBtn" class="btn btn-primary-custom mt-3">
-                            <span id="btnText">Save Record</span>
-                            <span id="btnLoader" class="spinner-border spinner-border-sm d-none ms-2"></span>
-                        </button>
-                        <div id="messageArea" class="mt-2 text-center small fw-bold"></div>
-                    </div>
+    <!-- APP SECTION (Hidden until logged in) -->
+    <div id="app-section">
+        <!-- Header -->
+        <div class="header-section text-center">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div class="w-100">
+                    <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>
+                    <p class="header-subtitle mb-0">Monthly Contributions & Loan Records</p>
+                </div>
+                <!-- Logout Button (Admin Only) -->
+                <div class="position-absolute top-0 end-0 p-3 admin-only">
+                    <button onclick="logout()" class="btn btn-sm btn-outline-light">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Right Section (Tabs) -->
-            <div class="col-lg-8 col-xl-9">
-                <div class="card">
-                    <div class="card-header p-0">
-                        <ul class="nav nav-tabs w-100 m-0 p-3" id="mainTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-content" type="button" role="tab" onclick="switchTab('history')">
-                                    <i class="fas fa-history me-2"></i>Records History
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary-content" type="button" role="tab" onclick="switchTab('summary')">
-                                    <i class="fas fa-users me-2"></i>Member Summary
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="loan-tab" data-bs-toggle="tab" data-bs-target="#loan-content" type="button" role="tab" onclick="switchTab('loan')">
-                                    <i class="fas fa-hand-holding-usd me-2"></i>Loan Summary
-                                </button>
-                            </li>
-                        </ul>
+        <div class="container-fluid px-3 px-md-4">
+            <div class="row">
+                <!-- Input Section (Left) - ADMIN ONLY -->
+                <div class="col-lg-4 col-xl-3 mb-4 admin-only">
+                    <div class="card sticky-top" style="top: 20px; z-index: 100;">
+                        <div class="card-header">
+                            <span id="formTitle"><i class="fas fa-plus-circle me-2"></i>Add Entry</span>
+                            <button id="cancelEditBtn" class="btn btn-sm btn-outline-danger d-none" onclick="cancelEdit()">Cancel</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="debugError" class="alert alert-danger small py-2 d-none"></div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="input-label">Month</label>
+                                    <select id="nepaliMonth" class="form-select form-select-sm">
+                                        <option value="Baishakh">Baishakh</option><option value="Jestha">Jestha</option>
+                                        <option value="Ashadh">Ashadh</option><option value="Shrawan">Shrawan</option>
+                                        <option value="Bhadra">Bhadra</option><option value="Ashwin">Ashwin</option>
+                                        <option value="Kartik">Kartik</option><option value="Mangsir">Mangsir</option>
+                                        <option value="Poush">Poush</option><option value="Magh">Magh</option>
+                                        <option value="Falgun">Falgun</option><option value="Chaitra">Chaitra</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="input-label">Year</label>
+                                    <select id="entryYear" class="form-select form-select-sm"></select>
+                                </div>
+                            </div>
+
+                            <div id="membersInputContainer" style="max-height: 55vh; overflow-y: auto; padding-right: 2px;">
+                                <!-- Dynamic Inputs -->
+                            </div>
+
+                            <div class="totals-bar">
+                                <span class="small fw-bold">Grand Total (Cash)</span>
+                                <span class="grand-total-val" id="grandTotalDisplay">0</span>
+                            </div>
+                            <small class="text-muted d-block mt-1 text-center" style="font-size: 0.7rem;">*Excludes Loan Principal</small>
+
+                            <button id="saveBtn" class="btn btn-primary-custom mt-3 admin-only-btn">
+                                <span id="btnText">Save Record</span>
+                                <span id="btnLoader" class="spinner-border spinner-border-sm d-none ms-2"></span>
+                            </button>
+                            <div id="messageArea" class="mt-2 text-center small fw-bold"></div>
+                        </div>
                     </div>
-                    <div class="card-body bg-white">
-                        
-                        <div id="history-content" class="tab-content-section active">
-                            <div class="d-flex justify-content-end mb-2">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="loadHistory()"><i class="fas fa-sync-alt"></i> Refresh</button>
-                            </div>
-                            <div id="historyContainer">
-                                <div class="text-center text-muted py-5">Loading records...</div>
-                            </div>
-                        </div>
+                </div>
 
-                        <div id="summary-content" class="tab-content-section">
-                            <div class="d-flex justify-content-end mb-2">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="loadSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
-                            </div>
-                            <div id="summaryContainer">
-                                <div class="text-center text-muted py-5">Loading summary...</div>
-                            </div>
+                <!-- Right Section (Tabs) -->
+                <div class="col-lg-8 col-xl-9" id="contentCol">
+                    <div class="card">
+                        <div class="card-header p-0">
+                            <ul class="nav nav-tabs w-100 m-0 p-3" id="mainTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-content" type="button" role="tab" onclick="switchTab('history')">
+                                        <i class="fas fa-history me-2"></i>Records History
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary-content" type="button" role="tab" onclick="switchTab('summary')">
+                                        <i class="fas fa-users me-2"></i>Member Summary
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="loan-tab" data-bs-toggle="tab" data-bs-target="#loan-content" type="button" role="tab" onclick="switchTab('loan')">
+                                        <i class="fas fa-hand-holding-usd me-2"></i>Loan Summary
+                                    </button>
+                                </li>
+                            </ul>
                         </div>
+                        <div class="card-body bg-white">
+                            
+                            <div id="history-content" class="tab-content-section active">
+                                <div class="d-flex justify-content-end mb-2">
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="loadHistory()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                                </div>
+                                <div id="historyContainer">
+                                    <div class="text-center text-muted py-5">Loading records...</div>
+                                </div>
+                            </div>
 
-                        <div id="loan-content" class="tab-content-section">
-                            <div class="d-flex justify-content-end mb-2">
-                                <button class="btn btn-sm btn-outline-secondary" onclick="loadLoanSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                            <div id="summary-content" class="tab-content-section">
+                                <div class="d-flex justify-content-end mb-2">
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="loadSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                                </div>
+                                <div id="summaryContainer">
+                                    <div class="text-center text-muted py-5">Loading summary...</div>
+                                </div>
                             </div>
-                            <div id="loanContainer">
-                                <div class="text-center text-muted py-5">Loading loan data...</div>
+
+                            <div id="loan-content" class="tab-content-section">
+                                <div class="d-flex justify-content-end mb-2">
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="loadLoanSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                                </div>
+                                <div id="loanContainer">
+                                    <div class="text-center text-muted py-5">Loading loan data...</div>
+                                </div>
                             </div>
+
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -262,7 +338,8 @@
                 <div class="modal-body" id="modalBody" style="max-height: 70vh; overflow-y: auto;"></div>
                 <div class="modal-footer bg-light">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="modalDeleteBtn">Delete Record</button>
+                    <!-- Delete Button is Admin Only -->
+                    <button type="button" class="btn btn-danger admin-only" id="modalDeleteBtn">Delete Record</button>
                 </div>
             </div>
         </div>
@@ -273,6 +350,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
            apiKey: "AIzaSyCHgrUuln0hRyEVYzCo3DHjLq-ApcseTeI",
@@ -284,14 +362,9 @@
            measurementId: "G-WEP639W4HY"
         };
 
-        if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-            document.getElementById('debugError').classList.remove('d-none');
-            document.getElementById('debugError').innerText = "Error: Firebase Config missing.";
-            throw new Error("Config Missing");
-        }
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
         const collectionName = "gms_bachat_kosh_v6";
 
         const members = [
@@ -325,8 +398,94 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const yearSelect = document.getElementById('entryYear');
         let currentDeleteId = null;
-
         let allRecordsData = [];
+
+        // --- AUTHENTICATION LOGIC ---
+
+        // Check Auth State
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in (Admin or Guest)
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('app-section').style.display = 'block';
+                
+                // Check if Admin (has email) or Guest (anonymous)
+                if (user.isAnonymous) {
+                    document.body.classList.remove('is-admin');
+                } else {
+                    document.body.classList.add('is-admin');
+                }
+                
+                initApp();
+            } else {
+                // User is signed out
+                document.getElementById('login-section').style.display = 'flex';
+                document.getElementById('app-section').style.display = 'none';
+                document.body.classList.remove('is-admin');
+            }
+        });
+
+        // Admin Login Form Submit
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const btnText = document.getElementById('loginBtnText');
+            const loader = document.getElementById('loginLoader');
+            const errorDiv = document.getElementById('loginError');
+
+            btnText.textContent = "Logging in...";
+            loader.classList.remove('d-none');
+            errorDiv.classList.add('d-none');
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    btnText.textContent = "Login as Admin";
+                    loader.classList.add('d-none');
+                })
+                .catch((error) => {
+                    btnText.textContent = "Login as Admin";
+                    loader.classList.add('d-none');
+                    errorDiv.textContent = "Invalid Email or Password.";
+                    errorDiv.classList.remove('d-none');
+                    console.error(error);
+                });
+        });
+
+        // Guest Login Function
+        window.loginAsGuest = () => {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Entering...';
+            btn.disabled = true;
+
+            signInAnonymously(auth)
+                .then((userCredential) => {
+                    // Signed in successfully as guest
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                })
+                .catch((error) => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    alert("Guest login failed: " + error.message);
+                });
+        };
+
+        // Logout Function
+        window.logout = () => {
+            signOut(auth).then(() => {
+                location.reload();
+            }).catch((error) => {
+                console.error("Logout error", error);
+            });
+        };
+
+        function initApp() {
+            initDropdowns();
+            renderInputs();
+            loadHistory();
+        }
 
         function initDropdowns() {
             yearSelect.innerHTML = '';
@@ -414,7 +573,6 @@
             return '';
         }
 
-        // Helper to parse Nepali Date String to comparable number (YYYYMMDD)
         function parseNepaliDateToNum(dateStr) {
             if (!dateStr) return 0;
             const parts = dateStr.split(' ');
@@ -426,7 +584,6 @@
             return year * 10000 + monthIdx * 100 + day;
         }
 
-        // Get Current Nepali Date Approximation
         function getCurrentNepaliDateNum() {
             const now = new Date();
             const npYear = now.getFullYear() + 57;
@@ -438,6 +595,12 @@
         const todayNP = getCurrentNepaliDateNum();
 
         saveBtn.addEventListener('click', async () => {
+            // Double check admin status before saving
+            if (auth.currentUser.isAnonymous) {
+                showMessage("Guests cannot save data.", "danger");
+                return;
+            }
+
             const month = document.getElementById('nepaliMonth').value;
             const year = document.getElementById('entryYear').value;
             if(!year) { showMessage("Enter Year", "danger"); return; }
@@ -473,7 +636,7 @@
                     cancelEdit();
                 } else {
                     payload.createdAt = new Date();
-                    payload.createdBy = "Anil Maharjan";
+                    payload.createdBy = auth.currentUser.email || "Admin";
                     await addDoc(collection(db, collectionName), payload);
                     showMessage("Saved!", "success");
                     renderInputs(null);
@@ -546,7 +709,7 @@
                                                 <th>Fine</th>
                                                 <th>Total</th>
                                                 <th>Loans</th>
-                                                <th>Action</th>
+                                                <th class="admin-only admin-only-table-cell">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -567,6 +730,18 @@
                         const t = rec.totals;
                         const hasLoan = t.loanCount > 0;
                         const loanBadge = hasLoan ? `<span class="badge-loan" onclick="window.showLoanDetails('${rec.id}')"><i class="fas fa-file-invoice-dollar me-1"></i>${t.loanCount} Active</span>` : '<span class="text-muted small">-</span>';
+                        
+                        let actionButtons = '';
+                        if (!auth.currentUser.isAnonymous) {
+                            actionButtons = `
+                                <button class="btn btn-action btn-outline-primary admin-only" onclick="window.editRecord('${rec.id}')"><i class="fas fa-pen"></i></button>
+                                <button class="btn btn-action btn-outline-secondary" onclick="window.viewDetails('${rec.id}')"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-action btn-outline-danger admin-only" onclick="window.confirmDelete('${rec.id}')"><i class="fas fa-trash"></i></button>
+                            `;
+                        } else {
+                             actionButtons = `<button class="btn btn-action btn-outline-secondary" onclick="window.viewDetails('${rec.id}')"><i class="fas fa-eye"></i></button>`;
+                        }
+
                         const row = `
                             <tr>
                                 <td class="col-month">${rec.month}</td>
@@ -576,11 +751,7 @@
                                 <td class="text-danger">${t.fine.toLocaleString()}</td>
                                 <td class="fw-bold text-dark">${t.grand.toLocaleString()}</td>
                                 <td>${loanBadge}</td>
-                                <td>
-                                    <button class="btn btn-action btn-outline-primary" onclick="window.editRecord('${rec.id}')"><i class="fas fa-pen"></i></button>
-                                    <button class="btn btn-action btn-outline-secondary" onclick="window.viewDetails('${rec.id}')"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-action btn-outline-danger" onclick="window.confirmDelete('${rec.id}')"><i class="fas fa-trash"></i></button>
-                                </td>
+                                <td class="admin-only admin-only-table-cell">${actionButtons}</td>
                             </tr>
                         `;
                         tbody.innerHTML += row;
@@ -626,29 +797,23 @@
             summaryContainer.innerHTML = html;
         }
 
-        // FIXED LOAN SUMMARY LOGIC
         function loadLoanSummary() {
             if (allRecordsData.length === 0) {
                 loanContainer.innerHTML = '<div class="text-center text-muted py-5">No data available.</div>';
                 return;
             }
 
-            // Sort all records chronologically to ensure we process payments in order
-            // We create a flat list of all records with their ID and data
             let chronologicalData = [...allRecordsData].sort((a, b) => {
-                // Sort by Year then Month Index
                 if (a.year !== b.year) return a.year - b.year;
                 return nepaliMonthsOrder.indexOf(a.month) - nepaliMonthsOrder.indexOf(b.month);
             });
 
-            let loans = []; // Array to store final loan objects
+            let loans = []; 
 
-            // Step 1: Identify all unique loans (where Loan Amount > 0)
             chronologicalData.forEach(rec => {
                 members.forEach(m => {
                     const data = rec.members[m];
                     if (data && data.loanAmount > 0 && data.takenDate) {
-                        // Create a new loan entry
                         loans.push({
                             member: m,
                             loanAmount: data.loanAmount,
@@ -657,34 +822,26 @@
                             maturityDate: data.maturityDate,
                             takenDateNum: parseNepaliDateToNum(data.takenDate),
                             maturityDateNum: parseNepaliDateToNum(data.maturityDate),
-                            totalPaid: 0, // Initialize paid amount
+                            totalPaid: 0,
                             status: 'Active'
                         });
                     }
                 });
             });
 
-            // Step 2: Calculate Total Installments Paid for EACH loan
-            // We iterate through every loan and sum up installments from the Taken Date onwards
             loans.forEach(loan => {
                 chronologicalData.forEach(rec => {
-                    const recDateNum = parseNepaliDateToNum(`${nepaliMonthsOrder.indexOf(rec.month)+1} ${rec.month}, ${rec.year}`.split(' ')[0] + ' ' + rec.month + ', ' + rec.year); 
-                    // Simpler date num for record:
                     const rMonthIdx = nepaliMonthsOrder.indexOf(rec.month) + 1;
-                    const recNum = rec.year * 10000 + rMonthIdx * 100 + 15; // Approx day 15 for sorting
+                    const recNum = rec.year * 10000 + rMonthIdx * 100 + 15; 
 
                     const data = rec.members[loan.member];
                     
-                    // Only count installments if:
-                    // 1. The record date is ON OR AFTER the loan taken date
-                    // 2. The member has an installment value > 0
                     if (data && data.installment > 0 && recNum >= loan.takenDateNum) {
                         loan.totalPaid += data.installment;
                     }
                 });
             });
 
-            // Step 3: Determine Status and Render
             let html = `<div class="table-responsive"><table class="loan-table"><thead><tr>
                 <th class="col-month" style="text-align:left !important;">Member</th>
                 <th>Loan Amount</th>
@@ -704,15 +861,11 @@
                 const balance = loan.loanAmount - loan.totalPaid;
                 let statusBadge = '';
                 
-                // LOGIC CHECK
                 if (loan.totalPaid >= loan.loanAmount) {
-                    // Condition: Total Installment == Loan Amount
                     statusBadge = '<span class="badge status-closed">Closed</span>';
                 } else if (todayNP > loan.maturityDateNum) {
-                    // Condition: Date expired but not paid
                     statusBadge = '<span class="badge status-overdue">Overdue</span>';
                 } else {
-                    // Condition: Within date range and not fully paid
                     statusBadge = '<span class="badge status-active">Active</span>';
                 }
 
@@ -747,6 +900,7 @@
         };
 
         window.editRecord = (id) => {
+            if (auth.currentUser.isAnonymous) return;
             getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
             .then(snap => {
                 const target = snap.docs.find(d => d.id === id);
@@ -807,7 +961,7 @@
                 if(!found) html += '<p class="text-center text-muted">No loans recorded for this month.</p>';
                 modalBody.innerHTML = html;
                 modalTitle.innerText = "Loan Information";
-                modalDeleteBtn.classList.add('d-none');
+                modalDeleteBtn.classList.add('d-none'); 
                 detailModal.show();
             });
         };
@@ -852,13 +1006,21 @@
                 html += `<div class="alert alert-success mt-3 mb-0 text-center fw-bold fs-5">Grand Total: NPR ${data.totals.grand.toLocaleString()}</div>`;
                 modalBody.innerHTML = html;
                 modalTitle.innerText = "Full Record Details";
-                modalDeleteBtn.classList.remove('d-none');
-                currentDeleteId = id;
+                
+                // Show delete button only if NOT anonymous (Admin)
+                if (!auth.currentUser.isAnonymous) {
+                    modalDeleteBtn.classList.remove('d-none');
+                    currentDeleteId = id;
+                } else {
+                    modalDeleteBtn.classList.add('d-none');
+                }
+                
                 detailModal.show();
             });
         };
 
         window.confirmDelete = (id) => {
+            if (auth.currentUser.isAnonymous) return;
             if(confirm("Delete this record?")) {
                 deleteDoc(doc(db, collectionName, id)).then(() => {
                     if(currentEditId === id) cancelEdit();
@@ -884,16 +1046,15 @@
             setTimeout(() => messageArea.textContent = '', 3000);
         }
 
-        initDropdowns();
-        renderInputs();
-        loadHistory();
-
+        // Expose globals
         window.editRecord = editRecord;
         window.cancelEdit = cancelEdit;
         window.showLoanDetails = showLoanDetails;
         window.viewDetails = viewDetails;
         window.confirmDelete = confirmDelete;
         window.switchTab = switchTab;
+        window.logout = logout;
+        window.loginAsGuest = loginAsGuest;
     </script>
 </body>
 </html>
