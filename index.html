@@ -38,9 +38,7 @@
             border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1rem;
             background: #fff; position: relative; overflow: hidden;
         }
-        .member-card::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary-light);
-        }
+        .member-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary-light); }
         .member-card.edit-mode { background: #f0fdfa; border-color: var(--primary-light); }
         .member-card.edit-mode::before { background: #f59e0b; }
 
@@ -75,11 +73,11 @@
         .accordion-button::after { filter: invert(1); opacity: 0.7; }
         .accordion-button:not(.collapsed)::after { filter: invert(1); }
         
-        .history-table, .summary-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        .history-table th, .summary-table th { background: #f9fafb; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; padding: 10px; text-align: center; }
-        .history-table td, .summary-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); font-size: 0.85rem; text-align: center; vertical-align: middle; }
-        .history-table tr:last-child td, .summary-table tr:last-child td { border-bottom: none; }
-        .history-table tr:hover, .summary-table tr:hover { background-color: #f9fafb; }
+        .history-table, .summary-table, .loan-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .history-table th, .summary-table th, .loan-table th { background: #f9fafb; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; padding: 10px; text-align: center; }
+        .history-table td, .summary-table td, .loan-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); font-size: 0.85rem; text-align: center; vertical-align: middle; }
+        .history-table tr:last-child td, .summary-table tr:last-child td, .loan-table tr:last-child td { border-bottom: none; }
+        .history-table tr:hover, .summary-table tr:hover, .loan-table tr:hover { background-color: #f9fafb; }
         
         .col-month { text-align: left !important; font-weight: 600; color: var(--primary); }
         .badge-loan { background-color: #e0e7ff; color: #4338ca; font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
@@ -128,9 +126,13 @@
         .date-group select { flex: 1; }
         .date-group select:first-child { flex: 0.8; }
         
-        /* Tab Content Visibility */
         .tab-content-section { display: none; }
         .tab-content-section.active { display: block; }
+
+        /* Loan Status Badges */
+        .status-active { background-color: #d1fae5; color: #065f46; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
+        .status-closed { background-color: #e5e7eb; color: #374151; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
+        .status-overdue { background-color: #fee2e2; color: #991b1b; font-weight: 700; padding: 6px 10px; border-radius: 6px; }
     </style>
 </head>
 <body>
@@ -196,7 +198,6 @@
             <div class="col-lg-8 col-xl-9">
                 <div class="card">
                     <div class="card-header p-0">
-                        <!-- Tabs Navigation -->
                         <ul class="nav nav-tabs w-100 m-0 p-3" id="mainTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-content" type="button" role="tab" onclick="switchTab('history')">
@@ -208,11 +209,15 @@
                                     <i class="fas fa-users me-2"></i>Member Summary
                                 </button>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="loan-tab" data-bs-toggle="tab" data-bs-target="#loan-content" type="button" role="tab" onclick="switchTab('loan')">
+                                    <i class="fas fa-hand-holding-usd me-2"></i>Loan Summary
+                                </button>
+                            </li>
                         </ul>
                     </div>
                     <div class="card-body bg-white">
                         
-                        <!-- Tab Content: History -->
                         <div id="history-content" class="tab-content-section active">
                             <div class="d-flex justify-content-end mb-2">
                                 <button class="btn btn-sm btn-outline-secondary" onclick="loadHistory()"><i class="fas fa-sync-alt"></i> Refresh</button>
@@ -222,13 +227,21 @@
                             </div>
                         </div>
 
-                        <!-- Tab Content: Summary -->
                         <div id="summary-content" class="tab-content-section">
                             <div class="d-flex justify-content-end mb-2">
                                 <button class="btn btn-sm btn-outline-secondary" onclick="loadSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
                             </div>
                             <div id="summaryContainer">
                                 <div class="text-center text-muted py-5">Loading summary...</div>
+                            </div>
+                        </div>
+
+                        <div id="loan-content" class="tab-content-section">
+                            <div class="d-flex justify-content-end mb-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="loadLoanSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                            </div>
+                            <div id="loanContainer">
+                                <div class="text-center text-muted py-5">Loading loan data...</div>
                             </div>
                         </div>
 
@@ -286,7 +299,6 @@
             "Rajeep Maharjan", "Sajina Barahi", "Supreme Chitrakar"
         ];
 
-        // Correct Nepali Month Order for Sorting (Baishakh = 0, Chaitra = 11)
         const nepaliMonthsOrder = [
             "Baishakh", "Jestha", "Ashadh", "Shrawan", "Bhadra", "Ashwin",
             "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"
@@ -304,6 +316,7 @@
         const messageArea = document.getElementById('messageArea');
         const historyContainer = document.getElementById('historyContainer');
         const summaryContainer = document.getElementById('summaryContainer');
+        const loanContainer = document.getElementById('loanContainer');
         const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
         const modalBody = document.getElementById('modalBody');
         const modalTitle = document.getElementById('modalTitle');
@@ -313,7 +326,6 @@
         const yearSelect = document.getElementById('entryYear');
         let currentDeleteId = null;
 
-        // Global Data Cache for Summary
         let allRecordsData = [];
 
         function initDropdowns() {
@@ -402,6 +414,29 @@
             return '';
         }
 
+        // Helper to parse Nepali Date String to comparable number (YYYYMMDD)
+        function parseNepaliDateToNum(dateStr) {
+            if (!dateStr) return 0;
+            const parts = dateStr.split(' ');
+            if (parts.length < 3) return 0;
+            const day = parseInt(parts[0]);
+            const year = parseInt(parts[2].replace(',', ''));
+            const monthName = parts[1];
+            const monthIdx = nepaliMonthsOrder.indexOf(monthName) + 1;
+            return year * 10000 + monthIdx * 100 + day;
+        }
+
+        // Get Current Nepali Date Approximation
+        function getCurrentNepaliDateNum() {
+            const now = new Date();
+            const npYear = now.getFullYear() + 57;
+            const npMonth = now.getMonth() + 1; 
+            const npDay = now.getDate();
+            return npYear * 10000 + npMonth * 100 + npDay;
+        }
+        
+        const todayNP = getCurrentNepaliDateNum();
+
         saveBtn.addEventListener('click', async () => {
             const month = document.getElementById('nepaliMonth').value;
             const year = document.getElementById('entryYear').value;
@@ -444,9 +479,8 @@
                     renderInputs(null);
                 }
                 loadHistory();
-                if(document.getElementById('summary-content').classList.contains('active')) {
-                    loadSummary();
-                }
+                if(document.getElementById('summary-content').classList.contains('active')) loadSummary();
+                if(document.getElementById('loan-content').classList.contains('active')) loadLoanSummary();
             } catch (error) {
                 console.error(error);
                 showMessage("Error: " + error.message, "danger");
@@ -480,14 +514,9 @@
 
                 Object.keys(grouped).sort((a,b) => b-a).forEach(year => {
                     let records = grouped[year];
-                    
-                    // SORT RECORDS BY NEPALI MONTH ORDER
-                    // Baishakh (index 0) should be at the bottom (last in array)
-                    // Chaitra (index 11) should be at the top (first in array)
                     records.sort((a, b) => {
                         const indexA = nepaliMonthsOrder.indexOf(a.month);
                         const indexB = nepaliMonthsOrder.indexOf(b.month);
-                        // Sort Descending by Month Index (11 -> 0)
                         return indexB - indexA;
                     });
 
@@ -567,15 +596,11 @@
 
         function loadSummary() {
             if (allRecordsData.length === 0) {
-                summaryContainer.innerHTML = '<div class="text-center text-muted py-5">No data available. Please load history first.</div>';
+                summaryContainer.innerHTML = '<div class="text-center text-muted py-5">No data available.</div>';
                 return;
             }
-
             let memberStats = {};
-            members.forEach(m => {
-                memberStats[m] = { deposit: 0, fine: 0, total: 0 };
-            });
-
+            members.forEach(m => { memberStats[m] = { deposit: 0, fine: 0, total: 0 }; });
             let grandTotalAll = 0;
 
             allRecordsData.forEach(rec => {
@@ -592,68 +617,133 @@
                 });
             });
 
-            let html = `
-                <div class="table-responsive">
-                    <table class="summary-table">
-                        <thead>
-                            <tr>
-                                <th class="col-month" style="text-align:left !important;">Member Name</th>
-                                <th class="text-primary">Total Deposit</th>
-                                <th class="text-danger">Total Fine</th>
-                                <th class="text-dark" style="background:#eef2ff !important;">Subtotal (Dep+Fine)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
+            let html = `<div class="table-responsive"><table class="summary-table"><thead><tr><th class="col-month" style="text-align:left !important;">Member Name</th><th class="text-primary">Total Deposit</th><th class="text-danger">Total Fine</th><th class="text-dark" style="background:#eef2ff !important;">Subtotal (Dep+Fine)</th></tr></thead><tbody>`;
             members.forEach(m => {
                 const stats = memberStats[m];
+                html += `<tr><td class="col-month" style="text-align:left !important; font-weight:600;">${m}</td><td class="text-primary fw-bold">${stats.deposit.toLocaleString()}</td><td class="text-danger fw-bold">${stats.fine.toLocaleString()}</td><td class="fw-bold" style="background:#f9fafb;">${stats.total.toLocaleString()}</td></tr>`;
+            });
+            html += `</tbody><tfoot><tr class="summary-total-row"><td class="text-end" style="text-align:right !important; padding-right:15px;">GRAND TOTAL (All Members)</td><td colspan="3" style="font-size:1.2rem; text-align:center;">NPR ${grandTotalAll.toLocaleString()}</td></tr></tfoot></table></div>`;
+            summaryContainer.innerHTML = html;
+        }
+
+        // FIXED LOAN SUMMARY LOGIC
+        function loadLoanSummary() {
+            if (allRecordsData.length === 0) {
+                loanContainer.innerHTML = '<div class="text-center text-muted py-5">No data available.</div>';
+                return;
+            }
+
+            // Sort all records chronologically to ensure we process payments in order
+            // We create a flat list of all records with their ID and data
+            let chronologicalData = [...allRecordsData].sort((a, b) => {
+                // Sort by Year then Month Index
+                if (a.year !== b.year) return a.year - b.year;
+                return nepaliMonthsOrder.indexOf(a.month) - nepaliMonthsOrder.indexOf(b.month);
+            });
+
+            let loans = []; // Array to store final loan objects
+
+            // Step 1: Identify all unique loans (where Loan Amount > 0)
+            chronologicalData.forEach(rec => {
+                members.forEach(m => {
+                    const data = rec.members[m];
+                    if (data && data.loanAmount > 0 && data.takenDate) {
+                        // Create a new loan entry
+                        loans.push({
+                            member: m,
+                            loanAmount: data.loanAmount,
+                            rate: data.interestRate,
+                            takenDate: data.takenDate,
+                            maturityDate: data.maturityDate,
+                            takenDateNum: parseNepaliDateToNum(data.takenDate),
+                            maturityDateNum: parseNepaliDateToNum(data.maturityDate),
+                            totalPaid: 0, // Initialize paid amount
+                            status: 'Active'
+                        });
+                    }
+                });
+            });
+
+            // Step 2: Calculate Total Installments Paid for EACH loan
+            // We iterate through every loan and sum up installments from the Taken Date onwards
+            loans.forEach(loan => {
+                chronologicalData.forEach(rec => {
+                    const recDateNum = parseNepaliDateToNum(`${nepaliMonthsOrder.indexOf(rec.month)+1} ${rec.month}, ${rec.year}`.split(' ')[0] + ' ' + rec.month + ', ' + rec.year); 
+                    // Simpler date num for record:
+                    const rMonthIdx = nepaliMonthsOrder.indexOf(rec.month) + 1;
+                    const recNum = rec.year * 10000 + rMonthIdx * 100 + 15; // Approx day 15 for sorting
+
+                    const data = rec.members[loan.member];
+                    
+                    // Only count installments if:
+                    // 1. The record date is ON OR AFTER the loan taken date
+                    // 2. The member has an installment value > 0
+                    if (data && data.installment > 0 && recNum >= loan.takenDateNum) {
+                        loan.totalPaid += data.installment;
+                    }
+                });
+            });
+
+            // Step 3: Determine Status and Render
+            let html = `<div class="table-responsive"><table class="loan-table"><thead><tr>
+                <th class="col-month" style="text-align:left !important;">Member</th>
+                <th>Loan Amount</th>
+                <th>Paid Installment</th>
+                <th>Balance</th>
+                <th>Taken Date</th>
+                <th>Maturity</th>
+                <th>Status</th>
+            </tr></thead><tbody>`;
+
+            if (loans.length === 0) {
+                loanContainer.innerHTML = '<div class="text-center text-muted py-5">No loan records found.</div>';
+                return;
+            }
+
+            loans.forEach(loan => {
+                const balance = loan.loanAmount - loan.totalPaid;
+                let statusBadge = '';
+                
+                // LOGIC CHECK
+                if (loan.totalPaid >= loan.loanAmount) {
+                    // Condition: Total Installment == Loan Amount
+                    statusBadge = '<span class="badge status-closed">Closed</span>';
+                } else if (todayNP > loan.maturityDateNum) {
+                    // Condition: Date expired but not paid
+                    statusBadge = '<span class="badge status-overdue">Overdue</span>';
+                } else {
+                    // Condition: Within date range and not fully paid
+                    statusBadge = '<span class="badge status-active">Active</span>';
+                }
+
                 html += `
                     <tr>
-                        <td class="col-month" style="text-align:left !important; font-weight:600;">${m}</td>
-                        <td class="text-primary fw-bold">${stats.deposit.toLocaleString()}</td>
-                        <td class="text-danger fw-bold">${stats.fine.toLocaleString()}</td>
-                        <td class="fw-bold" style="background:#f9fafb;">${stats.total.toLocaleString()}</td>
+                        <td class="col-month" style="text-align:left !important; font-weight:600;">${loan.member}</td>
+                        <td class="fw-bold">NPR ${loan.loanAmount.toLocaleString()}</td>
+                        <td class="text-success fw-bold">NPR ${loan.totalPaid.toLocaleString()}</td>
+                        <td class="${balance > 0 ? 'text-danger fw-bold' : 'text-muted'}">NPR ${Math.max(0, balance).toLocaleString()}</td>
+                        <td>${loan.takenDate}</td>
+                        <td>${loan.maturityDate}</td>
+                        <td>${statusBadge}</td>
                     </tr>
                 `;
             });
 
-            html += `
-                        </tbody>
-                        <tfoot>
-                            <tr class="summary-total-row">
-                                <td class="text-end" style="text-align:right !important; padding-right:15px;">GRAND TOTAL (All Members)</td>
-                                <td colspan="3" style="font-size:1.2rem; text-align:center;">NPR ${grandTotalAll.toLocaleString()}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                <div class="alert alert-info mt-3 small">
-                    <i class="fas fa-info-circle me-1"></i> Note: This summary includes <strong>Deposit + Fine</strong> only. Interest and Installments are excluded as per requirements.
-                </div>
-            `;
-
-            summaryContainer.innerHTML = html;
+            html += `</tbody></table></div>`;
+            loanContainer.innerHTML = html;
         }
 
         window.switchTab = (tabName) => {
-            const historyContent = document.getElementById('history-content');
-            const summaryContent = document.getElementById('summary-content');
-            const historyTab = document.getElementById('history-tab');
-            const summaryTab = document.getElementById('summary-tab');
-
-            if (tabName === 'history') {
-                historyContent.classList.add('active');
-                summaryContent.classList.remove('active');
-                historyTab.classList.add('active');
-                summaryTab.classList.remove('active');
-            } else {
-                historyContent.classList.remove('active');
-                summaryContent.classList.add('active');
-                historyTab.classList.remove('active');
-                summaryTab.classList.add('active');
-                loadSummary();
-            }
+            const sections = ['history', 'summary', 'loan'];
+            sections.forEach(t => {
+                document.getElementById(`${t}-content`).classList.remove('active');
+                document.getElementById(`${t}-tab`).classList.remove('active');
+            });
+            document.getElementById(`${tabName}-content`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            if (tabName === 'summary') loadSummary();
+            if (tabName === 'loan') loadLoanSummary();
         };
 
         window.editRecord = (id) => {
@@ -774,6 +864,7 @@
                     if(currentEditId === id) cancelEdit();
                     loadHistory();
                     if(document.getElementById('summary-content').classList.contains('active')) loadSummary();
+                    if(document.getElementById('loan-content').classList.contains('active')) loadLoanSummary();
                     detailModal.hide();
                     showMessage("Deleted", "warning");
                 }).catch(e => showMessage(e.message, "danger"));
