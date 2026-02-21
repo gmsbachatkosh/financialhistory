@@ -47,7 +47,8 @@
         .member-name { font-weight: 700; color: var(--text-main); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 8px; }
         .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-weight: 700; margin: 1rem 0 0.5rem 0; border-bottom: 1px dashed var(--border); padding-bottom: 4px; }
         
-        .form-control-sm, .form-select-sm { border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; padding: 0.35rem 0.5rem; }        .form-control-sm:focus, .form-select-sm:focus { border-color: var(--primary-light); box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.15); }
+        .form-control-sm, .form-select-sm { border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; padding: 0.35rem 0.5rem; }
+        .form-control-sm:focus, .form-select-sm:focus { border-color: var(--primary-light); box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.15); }
         .input-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; margin-bottom: 2px; text-transform: uppercase; }
 
         .totals-bar {
@@ -96,7 +97,8 @@
     <!-- Header -->
     <div class="header-section text-center">
         <div class="container">
-            <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>            <p class="header-subtitle mb-0">Monthly Contributions & Loan Records</p>
+            <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>
+            <p class="header-subtitle mb-0">Monthly Deposits & Loan Records</p>
         </div>
     </div>
 
@@ -145,7 +147,8 @@
                             <span id="btnLoader" class="spinner-border spinner-border-sm d-none ms-2"></span>
                         </button>
                         <div id="messageArea" class="mt-2 text-center small fw-bold"></div>
-                    </div>                </div>
+                    </div>
+                </div>
             </div>
 
             <!-- History Section -->
@@ -190,11 +193,13 @@
 
         // TODO: REPLACE WITH YOUR FIREBASE CONFIG
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyCHgrUuln0hRyEVYzCo3DHjLq-ApcseTeI",
+  authDomain: "member-tracker-78f9f.firebaseapp.com",
+  projectId: "member-tracker-78f9f",
+  storageBucket: "member-tracker-78f9f.firebasestorage.app",
+  messagingSenderId: "368007807825",
+  appId: "1:368007807825:web:e80570af3567c4ed3a0970",
+  measurementId: "G-WEP639W4HY"
         };
 
         if (firebaseConfig.apiKey === "YOUR_API_KEY") {
@@ -244,6 +249,7 @@
                 yearSelect.appendChild(option);
             }
         }
+
         // Helper: Generate Date Selectors HTML
         function createDateSelectors(prefix, member, data = {}) {
             const days = Array.from({length: 32}, (_, i) => i + 1);
@@ -292,7 +298,8 @@
                         </div>
                         <div class="col-6">
                             <label class="input-label">Installment</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="installment" value="${d.installment || 0}">                        </div>
+                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="installment" value="${d.installment || 0}">
+                        </div>
                         <div class="col-6">
                             <label class="input-label">Fine</label>
                             <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="fine" value="${d.fine || 0}">
@@ -341,7 +348,8 @@
                 grandTotal += memberTotal;
             });
             grandTotalDisplay.textContent = `NPR ${grandTotal.toLocaleString()}`;
-            return grandTotal;        }
+            return grandTotal;
+        }
 
         // Helper: Get Date String from Selects
         function getDateFromSelects(prefix, member) {
@@ -391,6 +399,7 @@
             });
 
             const grandTotal = Object.values(memberData).reduce((acc, curr) => acc + curr.cashTotal, 0);
+
             setLoading(true);
             try {
                 const payload = {
@@ -422,519 +431,6 @@
         });
 
         // Load History
-        async function loadHistory() {
-            historyContainer.innerHTML = '<div class="text-center text-muted py-5"><div class="spinner-border text-primary"></div></div>';
-            try {
-                const q = query(collection(db, collectionName), orderBy("timestamp", "desc"));
-                const snapshot = await getDocs(q);
-                historyContainer.innerHTML = '';
-
-                if(snapshot.empty) {
-                    historyContainer.innerHTML = '<div class="text-center text-muted py-5">No records found.</div>';
-                    return;
-                }
-
-                const grouped = {};
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const y = data.year;
-                    if(!grouped[y]) grouped[y] = [];
-                    grouped[y].push({ id: docSnap.id, ...data });                });
-
-                Object.keys(grouped).sort((a,b) => b-a).forEach(year => {
-                    const records = grouped[year];
-                    const uniqueId = `year-${year}`;
-                    
-                    const accordionItem = document.createElement('div');
-                    accordionItem.className = 'accordion-item';
-                    accordionItem.innerHTML = `
-                        <h2 class="accordion-header" id="heading${uniqueId}">
-                            <button class="accordion-button ${year === Object.keys(grouped)[0] ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${uniqueId}" aria-expanded="${year === Object.keys(grouped)[0]}">
-                                <i class="far fa-calendar-alt me-2"></i> Year ${year} 
-                                <span class="badge bg-light text-primary ms-2">${records.length} Months</span>
-                            </button>
-                        </h2>
-                        <div id="collapse${uniqueId}" class="accordion-collapse collapse ${year === Object.keys(grouped)[0] ? 'show' : ''}" data-bs-parent="#historyContainer">
-                            <div class="accordion-body p-0">
-                                <div class="table-responsive">
-                                    <table class="history-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="col-month">Month</th>
-                                                <th>Deposit</th>
-                                                <th>Interest</th>
-                                                <th>Install</th>
-                                                <th>Fine</th>
-                                                <th>Total</th>
-                                                <th>Loans</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    const tbody = accordionItem.querySelector('tbody');
-                    records.forEach(rec => {
-                        const t = rec.totals;
-                        const hasLoan = t.loanCount > 0;
-                        const loanBadge = hasLoan ? `<span class="badge-loan" onclick="window.showLoanDetails('${rec.id}')"><i class="fas fa-file-invoice-dollar me-1"></i>${t.loanCount} Active</span>` : '<span class="text-muted small">-</span>';
-                        
-                        const row = `
-                            <tr>
-                                <td class="col-month">${rec.month}</td>
-                                <td class="text-primary fw-bold">${t.deposit.toLocaleString()}</td>
-                                <td class="text-success">${t.interest.toLocaleString()}</td>
-                                <td class="text-info">${t.installment.toLocaleString()}</td>                                <td class="text-danger">${t.fine.toLocaleString()}</td>
-                                <td class="fw-bold text-dark">${t.grand.toLocaleString()}</td>
-                                <td>${loanBadge}</td>
-                                <td>
-                                    <button class="btn btn-action btn-outline-primary" onclick="window.editRecord('${rec.id}')"><i class="fas fa-pen"></i></button>
-                                    <button class="btn btn-action btn-outline-secondary" onclick="window.viewDetails('${rec.id}')"><i class="fas fa-eye"></i></button>
-                                    <button class="btn btn-action btn-outline-danger" onclick="window.confirmDelete('${rec.id}')"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.innerHTML += row;
-                    });
-                    historyContainer.appendChild(accordionItem);
-                });
-
-            } catch (error) {
-                console.error(error);
-                historyContainer.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
-            }
-        }
-
-        // Edit Logic
-        window.editRecord = (id) => {
-            getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
-            .then(snap => {
-                const target = snap.docs.find(d => d.id === id);
-                if(target) {
-                    const data = target.data();
-                    currentEditId = id;
-                    document.getElementById('nepaliMonth').value = data.month;
-                    document.getElementById('entryYear').value = data.year;
-                    renderInputs(data);
-                    
-                    formTitle.innerHTML = '<i class="fas fa-edit me-2"></i>Edit Entry';
-                    cancelEditBtn.classList.remove('d-none');
-                    saveBtn.classList.replace('btn-primary-custom', 'btn-warning');
-                    saveBtn.style.background = '#f59e0b';
-                    saveBtn.style.color = 'white';
-                    document.getElementById('btnText').innerText = "Update";
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    showMessage("Editing mode active", "info");
-                }
-            });
-        };
-
-        window.cancelEdit = () => {
-            currentEditId = null;
-            formTitle.innerHTML = '<i class="fas fa-plus-circle me-2"></i>Add Entry';
-            cancelEditBtn.classList.add('d-none');
-            saveBtn.classList.replace('btn-warning', 'btn-primary-custom');            saveBtn.style.background = ''; 
-            saveBtn.style.color = '';
-            document.getElementById('btnText').innerText = "Save Record";
-            renderInputs(null);
-            messageArea.innerText = "";
-        };
-
-        // Show Loan Details
-        window.showLoanDetails = (id) => {
-            getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
-            .then(snap => {
-                const target = snap.docs.find(d => d.id === id);
-                if(!target) return;
-                const data = target.data();
-                
-                let html = `<h6 class="mb-3 text-center text-primary">Loan Records for ${data.month} ${data.year}</h6>`;
-                let found = false;
-                
-                for (const [name, vals] of Object.entries(data.members)) {
-                    if(vals.loanAmount > 0) {
-                        found = true;
-                        html += `
-                            <div class="loan-detail-box mb-2">
-                                <div class="fw-bold text-dark"><i class="fas fa-user me-2"></i>${name}</div>
-                                <div class="row mt-2">
-                                    <div class="col-6"><small class="text-muted">Amount:</small> <br><strong>NPR ${vals.loanAmount.toLocaleString()}</strong></div>
-                                    <div class="col-6"><small class="text-muted">Rate:</small> <br><strong>${vals.interestRate}%</strong></div>
-                                    <div class="col-6"><small class="text-muted">Taken:</small> <br>${vals.takenDate || '-'}</div>
-                                    <div class="col-6"><small class="text-muted">Maturity:</small> <br>${vals.maturityDate || '-'}</div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-                if(!found) html += '<p class="text-center text-muted">No loans recorded for this month.</p>';
-                
-                modalBody.innerHTML = html;
-                modalTitle.innerText = "Loan Information";
-                modalDeleteBtn.classList.add('d-none');
-                detailModal.show();
-            });
-        };
-
-        // Full View Details (Conditional)
-        window.viewDetails = (id) => {
-            getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
-            .then(snap => {
-                const target = snap.docs.find(d => d.id === id);
-                if(!target) return;
-                const data = target.data();                
-                let html = `<h5 class="mb-4 text-center border-bottom pb-2">${data.month} ${data.year}</h5>`;
-                
-                for (const [name, vals] of Object.entries(data.members)) {
-                    if(vals.cashTotal === 0 && vals.loanAmount === 0) continue;
-
-                    html += `
-                        <div class="card mb-3 shadow-sm">
-                            <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
-                                <strong>${name}</strong>
-                                <span class="badge bg-primary">Total: NPR ${vals.cashTotal.toLocaleString()}</span>
-                            </div>
-                            <div class="card-body py-2">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="detail-row"><span class="detail-label">Deposit</span> <span class="detail-value positive-value">${vals.deposit > 0 ? vals.deposit.toLocaleString() : '-'}</span></div>
-                                        ${vals.interest > 0 ? `<div class="detail-row"><span class="detail-label">Interest</span> <span class="detail-value positive-value">${vals.interest.toLocaleString()}</span></div>` : ''}
-                                        ${vals.installment > 0 ? `<div class="detail-row"><span class="detail-label">Installment</span> <span class="detail-value positive-value">${vals.installment.toLocaleString()}</span></div>` : ''}
-                                        ${vals.fine > 0 ? `<div class="detail-row"><span class="detail-label">Fine</span> <span class="detail-value text-danger">${vals.fine.toLocaleString()}</span></div>` : ''}
-                                    </div>
-                                    <div class="col-6 border-start">
-                                        ${vals.loanAmount > 0 ? `
-                                            <div class="small text-muted mb-1">Loan Details:</div>
-                                            <div class="detail-row"><span class="detail-label">Amount</span> <span class="detail-value">${vals.loanAmount.toLocaleString()}</span></div>
-                                            <div class="detail-row"><span class="detail-label">Rate</span> <span class="detail-value">${vals.interestRate}%</span></div>
-                                            <div class="detail-row"><span class="detail-label">Taken</span> <span class="detail-value">${vals.takenDate || '-'}</span></div>
-                                            <div class="detail-row"><span class="detail-label">Maturity</span> <span class="detail-value">${vals.maturityDate || '-'}</span></div>
-                                        ` : '<div class="text-muted small fst-italic mt-2">No loan record</div>'}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                html += `<div class="alert alert-success mt-3 mb-0 text-center fw-bold fs-5">Grand Total: NPR ${data.totals.grand.toLocaleString()}</div>`;
-                
-                modalBody.innerHTML = html;
-                modalTitle.innerText = "Full Record Details";
-                modalDeleteBtn.classList.remove('d-none');
-                currentDeleteId = id;
-                detailModal.show();
-            });
-        };
-
-        window.confirmDelete = (id) => {
-            if(confirm("Delete this record?")) {
-                deleteDoc(doc(db, collectionName, id)).then(() => {
-                    if(currentEditId === id) cancelEdit();
-                    loadHistory();                    detailModal.hide();
-                    showMessage("Deleted", "warning");
-                }).catch(e => showMessage(e.message, "danger"));
-            }
-        };
-
-        modalDeleteBtn.addEventListener('click', () => { if(currentDeleteId) window.confirmDelete(currentDeleteId); });
-
-        function setLoading(isLoading) {
-            saveBtn.disabled = isLoading;
-            document.getElementById('btnLoader').classList.toggle('d-none', !isLoading);
-        }
-
-        function showMessage(msg, type) {
-            messageArea.textContent = msg;
-            messageArea.className = `mt-2 text-center small fw-bold text-${type}`;
-            setTimeout(() => messageArea.textContent = '', 3000);
-        }
-
-        // Init
-        initDropdowns();
-        renderInputs();
-        loadHistory();
-
-        // Expose globals
-        window.editRecord = editRecord;
-        window.cancelEdit = cancelEdit;
-        window.showLoanDetails = showLoanDetails;
-        window.viewDetails = viewDetails;
-        window.confirmDelete = confirmDelete;
-    </script>
-</body>
-    </html>            <!-- Input Section -->
-            <div class="col-lg-4 col-xl-3 mb-4">
-                <div class="card sticky-top" style="top: 20px; z-index: 100;">
-                    <div class="card-header">
-                        <span id="formTitle"><i class="fas fa-plus-circle me-2"></i>Add Entry</span>
-                        <button id="cancelEditBtn" class="btn btn-sm btn-outline-danger d-none" onclick="cancelEdit()">Cancel</button>
-                    </div>
-                    <div class="card-body">
-                        <div id="debugError" class="alert alert-danger small py-2 d-none"></div>
-
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <label class="input-label">Month</label>
-                                <select id="nepaliMonth" class="form-select form-select-sm">
-                                    <option value="Baishakh">Baishakh</option><option value="Jestha">Jestha</option>
-                                    <option value="Ashadh">Ashadh</option><option value="Shrawan">Shrawan</option>
-                                    <option value="Bhadra">Bhadra</option><option value="Ashwin">Ashwin</option>
-                                    <option value="Kartik">Kartik</option><option value="Mangsir">Mangsir</option>
-                                    <option value="Poush">Poush</option><option value="Magh">Magh</option>
-                                    <option value="Falgun">Falgun</option><option value="Chaitra">Chaitra</option>
-                                </select>
-                            </div>
-                            <div class="col-6">
-                                <label class="input-label">Year</label>
-                                <input type="number" id="entryYear" class="form-control form-control-sm" value="2081">
-                            </div>
-                        </div>
-
-                        <div id="membersInputContainer" style="max-height: 60vh; overflow-y: auto; padding-right: 2px;">
-                            <!-- Dynamic Inputs -->
-                        </div>
-
-                        <div class="totals-bar">
-                            <span class="small fw-bold">Grand Total (Cash)</span>
-                            <span class="grand-total-val" id="grandTotalDisplay">0</span>
-                        </div>
-                        <small class="text-muted d-block mt-1 text-center" style="font-size: 0.7rem;">*Excludes Loan Principal</small>
-
-                        <button id="saveBtn" class="btn btn-primary-custom mt-3">
-                            <span id="btnText">Save Record</span>
-                            <span id="btnLoader" class="spinner-border spinner-border-sm d-none ms-2"></span>
-                        </button>
-                        <div id="messageArea" class="mt-2 text-center small fw-bold"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- History Section -->
-            <div class="col-lg-8 col-xl-9">
-                <div class="card">
-                    <div class="card-header">
-                        <span><i class="fas fa-history me-2"></i>Records History</span>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="loadHistory()"><i class="fas fa-sync-alt"></i></button>
-                    </div>
-                    <div class="card-body bg-white">
-                        <div id="historyContainer">
-                            <div class="text-center text-muted py-5">Loading records...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detail Modal -->
-    <div class="modal fade" id="detailModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Record Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="modalBody"></div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="modalDeleteBtn">Delete Record</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // TODO: REPLACE WITH YOUR FIREBASE CONFIG
-        const firebaseConfig = {
-            apiKey: "AIzaSyCHgrUuln0hRyEVYzCo3DHjLq-ApcseTeI",
-  authDomain: "member-tracker-78f9f.firebaseapp.com",
-  projectId: "member-tracker-78f9f",
-  storageBucket: "member-tracker-78f9f.firebasestorage.app",
-  messagingSenderId: "368007807825",
-  appId: "1:368007807825:web:e80570af3567c4ed3a0970",
-  measurementId: "G-WEP639W4HY"
-        };
-
-        if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-            document.getElementById('debugError').classList.remove('d-none');
-            document.getElementById('debugError').innerText = "Error: Firebase Config missing.";
-            throw new Error("Config Missing");
-        }
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const collectionName = "family_finance_v3";
-
-        const members = [
-            "Anil Maharjan", "Bindu Maharjan", "Manisha Maharjan",
-            "Rajeep Maharjan", "Sajina Barahi", "Supreme Chitrakar"
-        ];
-
-        let currentEditId = null;
-        const membersContainer = document.getElementById('membersInputContainer');
-        const saveBtn = document.getElementById('saveBtn');
-        const grandTotalDisplay = document.getElementById('grandTotalDisplay');
-        const messageArea = document.getElementById('messageArea');
-        const historyContainer = document.getElementById('historyContainer');
-        const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
-        const modalBody = document.getElementById('modalBody');
-        const modalDeleteBtn = document.getElementById('modalDeleteBtn');
-        const formTitle = document.getElementById('formTitle');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
-        let currentDeleteId = null;
-
-        // Render Inputs
-        function renderInputs(dataToFill = null) {
-            membersContainer.innerHTML = '';
-            members.forEach((member) => {
-                const d = dataToFill && dataToFill.members[member] ? dataToFill.members[member] : {};
-                
-                const div = document.createElement('div');
-                div.className = `member-card ${dataToFill ? 'edit-mode' : ''}`;
-                div.innerHTML = `
-                    <div class="member-name"><i class="fas fa-user-circle text-primary"></i> ${member}</div>
-                    
-                    <div class="section-title">Financials (Cash Flow)</div>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <label class="input-label">Deposit</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="deposit" value="${d.deposit || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Interest</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="interest" value="${d.interest || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Installment</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="installment" value="${d.installment || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Fine</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="fine" value="${d.fine || 0}">
-                        </div>
-                    </div>
-
-                    <div class="section-title">Loan Record (Info Only)</div>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <label class="input-label">Loan Amount</label>
-                            <input type="number" class="form-control form-control-sm calc-input" data-member="${member}" data-type="loanAmount" value="${d.loanAmount || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Rate (%)</label>
-                            <input type="number" step="0.1" class="form-control form-control-sm calc-input" data-member="${member}" data-type="interestRate" value="${d.interestRate || 0}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Taken Date</label>
-                            <input type="date" class="form-control form-control-sm calc-input" data-member="${member}" data-type="takenDate" value="${d.takenDate || ''}">
-                        </div>
-                        <div class="col-6">
-                            <label class="input-label">Maturity</label>
-                            <input type="date" class="form-control form-control-sm calc-input" data-member="${member}" data-type="maturityDate" value="${d.maturityDate || ''}">
-                        </div>
-                    </div>
-                `;
-                membersContainer.appendChild(div);
-            });
-            document.querySelectorAll('.calc-input').forEach(input => input.addEventListener('input', calculateTotals));
-            calculateTotals();
-        }
-
-        // Calculate Totals (EXCLUDING Loan Amount)
-        function calculateTotals() {
-            let grandTotal = 0;
-            members.forEach(member => {
-                const types = ['deposit', 'interest', 'installment', 'fine'];
-                let memberTotal = 0;
-                types.forEach(type => {
-                    const val = parseFloat(document.querySelector(`.calc-input[data-member="${member}"][data-type="${type}"]`)?.value) || 0;
-                    memberTotal += val;
-                });
-                grandTotal += memberTotal;
-            });
-            grandTotalDisplay.textContent = `NPR ${grandTotal.toLocaleString()}`;
-            return grandTotal;
-        }
-
-        // Save/Update
-        saveBtn.addEventListener('click', async () => {
-            const month = document.getElementById('nepaliMonth').value;
-            const year = document.getElementById('entryYear').value;
-            if(!year) { showMessage("Enter Year", "danger"); return; }
-
-            let memberData = {};
-            let sums = { deposit:0, interest:0, installment:0, fine:0, loanCount:0 }; // loanCount just to track if any loans exist
-
-            members.forEach(member => {
-                const getVal = (type) => parseFloat(document.querySelector(`.calc-input[data-member="${member}"][data-type="${type}"]`).value) || 0;
-                const getDate = (type) => document.querySelector(`.calc-input[data-member="${member}"][data-type="${type}"]`).value;
-
-                const deposit = getVal('deposit');
-                const interest = getVal('interest');
-                const installment = getVal('installment');
-                const fine = getVal('fine');
-                const loanAmount = getVal('loanAmount');
-                const interestRate = getVal('interestRate');
-                const takenDate = getDate('takenDate');
-                const maturityDate = getDate('maturityDate');
-
-                // Cash Total excludes loanAmount
-                const cashTotal = deposit + interest + installment + fine; 
-
-                memberData[member] = { 
-                    deposit, interest, installment, fine, 
-                    loanAmount, interestRate, takenDate, maturityDate,
-                    cashTotal 
-                };
-
-                sums.deposit += deposit; sums.interest += interest; sums.installment += installment; sums.fine += fine;
-                if(loanAmount > 0) sums.loanCount++;
-            });
-
-            const grandTotal = Object.values(memberData).reduce((acc, curr) => acc + curr.cashTotal, 0);
-
-            setLoading(true);
-            try {
-                const payload = {
-                    month, year,
-                    timestamp: new Date(),
-                    members: memberData,
-                    totals: { ...sums, grand: grandTotal },
-                    updatedAt: new Date()
-                };
-
-                if (currentEditId) {
-                    await updateDoc(doc(db, collectionName, currentEditId), payload);
-                    showMessage("Updated!", "success");
-                    cancelEdit();
-                } else {
-                    payload.createdAt = new Date();
-                    payload.createdBy = "Anil Maharjan";
-                    await addDoc(collection(db, collectionName), payload);
-                    showMessage("Saved!", "success");
-                    document.getElementById('entryYear').value = new Date().getFullYear() + 57;
-                    renderInputs(null);
-                }
-                loadHistory();
-            } catch (error) {
-                console.error(error);
-                showMessage("Error: " + error.message, "danger");
-            } finally {
-                setLoading(false);
-            }
-        });
-
-        // Load History with Accordions
         async function loadHistory() {
             historyContainer.innerHTML = '<div class="text-center text-muted py-5"><div class="spinner-border text-primary"></div></div>';
             try {
@@ -1056,12 +552,11 @@
             saveBtn.style.background = ''; 
             saveBtn.style.color = '';
             document.getElementById('btnText').innerText = "Save Record";
-            document.getElementById('entryYear').value = new Date().getFullYear() + 57;
             renderInputs(null);
             messageArea.innerText = "";
         };
 
-        // Show Loan Details Popup (Specific Request)
+        // Show Loan Details
         window.showLoanDetails = (id) => {
             getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
             .then(snap => {
@@ -1091,14 +586,13 @@
                 if(!found) html += '<p class="text-center text-muted">No loans recorded for this month.</p>';
                 
                 modalBody.innerHTML = html;
-                // Reuse the main modal but change title slightly or just show it
-                document.querySelector('#detailModal .modal-title').innerText = "Loan Information";
-                document.getElementById('modalDeleteBtn').classList.add('d-none'); // Hide delete in this context
+                modalTitle.innerText = "Loan Information";
+                modalDeleteBtn.classList.add('d-none');
                 detailModal.show();
             });
         };
 
-        // Full View Details
+        // Full View Details (Conditional)
         window.viewDetails = (id) => {
             getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
             .then(snap => {
@@ -1106,30 +600,45 @@
                 if(!target) return;
                 const data = target.data();
                 
-                let html = `<h5 class="mb-3 text-center">${data.month} ${data.year}</h5>
-                <div class="table-responsive">
-                    <table class="table table-sm table-bordered">
-                        <thead class="table-light"><tr><th>Member</th><th>Cash Total</th><th>Loan Info</th></tr></thead>
-                        <tbody>`;
+                let html = `<h5 class="mb-4 text-center border-bottom pb-2">${data.month} ${data.year}</h5>`;
                 
                 for (const [name, vals] of Object.entries(data.members)) {
-                    const loanInfo = vals.loanAmount > 0 
-                        ? `<small class="text-primary">Amt: ${vals.loanAmount}, Rate: ${vals.interestRate}%</small>` 
-                        : '<span class="text-muted small">None</span>';
-                    
+                    if(vals.cashTotal === 0 && vals.loanAmount === 0) continue;
+
                     html += `
-                        <tr>
-                            <td>${name}</td>
-                            <td class="fw-bold">NPR ${vals.cashTotal.toLocaleString()}</td>
-                            <td>${loanInfo}</td>
-                        </tr>
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+                                <strong>${name}</strong>
+                                <span class="badge bg-primary">Total: NPR ${vals.cashTotal.toLocaleString()}</span>
+                            </div>
+                            <div class="card-body py-2">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="detail-row"><span class="detail-label">Deposit</span> <span class="detail-value positive-value">${vals.deposit > 0 ? vals.deposit.toLocaleString() : '-'}</span></div>
+                                        ${vals.interest > 0 ? `<div class="detail-row"><span class="detail-label">Interest</span> <span class="detail-value positive-value">${vals.interest.toLocaleString()}</span></div>` : ''}
+                                        ${vals.installment > 0 ? `<div class="detail-row"><span class="detail-label">Installment</span> <span class="detail-value positive-value">${vals.installment.toLocaleString()}</span></div>` : ''}
+                                        ${vals.fine > 0 ? `<div class="detail-row"><span class="detail-label">Fine</span> <span class="detail-value text-danger">${vals.fine.toLocaleString()}</span></div>` : ''}
+                                    </div>
+                                    <div class="col-6 border-start">
+                                        ${vals.loanAmount > 0 ? `
+                                            <div class="small text-muted mb-1">Loan Details:</div>
+                                            <div class="detail-row"><span class="detail-label">Amount</span> <span class="detail-value">${vals.loanAmount.toLocaleString()}</span></div>
+                                            <div class="detail-row"><span class="detail-label">Rate</span> <span class="detail-value">${vals.interestRate}%</span></div>
+                                            <div class="detail-row"><span class="detail-label">Taken</span> <span class="detail-value">${vals.takenDate || '-'}</span></div>
+                                            <div class="detail-row"><span class="detail-label">Maturity</span> <span class="detail-value">${vals.maturityDate || '-'}</span></div>
+                                        ` : '<div class="text-muted small fst-italic mt-2">No loan record</div>'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     `;
                 }
-                html += `<tr class="table-success"><th class="fs-5">Grand Total</th><td colspan="2" class="fs-5 fw-bold">NPR ${data.totals.grand.toLocaleString()}</td></tr></tbody></table></div>`;
+                
+                html += `<div class="alert alert-success mt-3 mb-0 text-center fw-bold fs-5">Grand Total: NPR ${data.totals.grand.toLocaleString()}</div>`;
                 
                 modalBody.innerHTML = html;
-                document.querySelector('#detailModal .modal-title').innerText = "Full Record Details";
-                document.getElementById('modalDeleteBtn').classList.remove('d-none');
+                modalTitle.innerText = "Full Record Details";
+                modalDeleteBtn.classList.remove('d-none');
                 currentDeleteId = id;
                 detailModal.show();
             });
@@ -1160,6 +669,7 @@
         }
 
         // Init
+        initDropdowns();
         renderInputs();
         loadHistory();
 
