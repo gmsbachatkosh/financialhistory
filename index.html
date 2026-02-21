@@ -86,10 +86,27 @@
         .detail-value { font-weight: 600; color: var(--text-main); }
         .positive-value { color: var(--primary); }
 
-        /* Custom Date Selectors Group */
+        /* Yearly Total Row Style */
+        .yearly-total-row {
+            background-color: var(--text-main) !important;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        .yearly-total-row td {
+            border-top: 2px solid var(--primary-light);
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+        }
+        .yearly-total-label {
+            text-align: right !important;
+            color: var(--primary-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
         .date-group { display: flex; gap: 4px; }
         .date-group select { flex: 1; }
-        .date-group select:first-child { flex: 0.8; } /* Day slightly smaller */
+        .date-group select:first-child { flex: 0.8; }
     </style>
 </head>
 <body>
@@ -98,7 +115,7 @@
     <div class="header-section text-center">
         <div class="container">
             <h1 class="header-title"><i class="fas fa-piggy-bank me-2"></i>GMS Bachat Kosh</h1>
-            <p class="header-subtitle mb-0">Monthly Deposits & Loan Records</p>
+            <p class="header-subtitle mb-0">Monthly Contributions & Loan Records</p>
         </div>
     </div>
 
@@ -193,7 +210,7 @@
 
         // TODO: REPLACE WITH YOUR FIREBASE CONFIG
         const firebaseConfig = {
-            apiKey: "AIzaSyCHgrUuln0hRyEVYzCo3DHjLq-ApcseTeI",
+           apiKey: "AIzaSyCHgrUuln0hRyEVYzCo3DHjLq-ApcseTeI",
   authDomain: "member-tracker-78f9f.firebaseapp.com",
   projectId: "member-tracker-78f9f",
   storageBucket: "member-tracker-78f9f.firebasestorage.app",
@@ -239,7 +256,6 @@
 
         // Initialize Dropdowns
         function initDropdowns() {
-            // Year Dropdown (Main Entry)
             yearSelect.innerHTML = '';
             for (let y = 2075; y <= 2085; y++) {
                 const option = document.createElement('option');
@@ -430,7 +446,7 @@
             }
         });
 
-        // Load History
+        // Load History with Yearly Totals
         async function loadHistory() {
             historyContainer.innerHTML = '<div class="text-center text-muted py-5"><div class="spinner-border text-primary"></div></div>';
             try {
@@ -455,6 +471,12 @@
                     const records = grouped[year];
                     const uniqueId = `year-${year}`;
                     
+                    // Calculate Yearly Grand Total
+                    let yearGrandTotal = 0;
+                    records.forEach(rec => {
+                        yearGrandTotal += rec.totals.grand;
+                    });
+
                     const accordionItem = document.createElement('div');
                     accordionItem.className = 'accordion-item';
                     accordionItem.innerHTML = `
@@ -481,6 +503,13 @@
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
+                                        <!-- Yearly Total Row will be appended here -->
+                                        <tfoot>
+                                            <tr class="yearly-total-row">
+                                                <td colspan="5" class="yearly-total-label">Year ${year} Grand Total</td>
+                                                <td colspan="3" style="text-align: center; font-size: 1.1rem;">NPR ${yearGrandTotal.toLocaleString()}</td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -592,7 +621,7 @@
             });
         };
 
-        // Full View Details (Conditional)
+        // Full View Details
         window.viewDetails = (id) => {
             getDocs(query(collection(db, collectionName), orderBy("timestamp", "desc")))
             .then(snap => {
